@@ -1,10 +1,14 @@
 {
   "compilerOptions": {
-    "target": "es2018",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "target": "es5",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
-    "esModuleInterop": true,
     "skipLibCheck": true,
+    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
@@ -13,26 +17,9 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react",
-    "noImplicitAny": true,
-    "outDir": "./dist/",
-    "preserveConstEnums": true,
-    "removeComments": true,
-    "sourceMap": true,
-    "alwaysStrict": true,
-    "strictNullChecks": true,
-    "downlevelIteration": true,
-    "strictFunctionTypes": true,
-    "strictBindCallApply": true,
-    "strictPropertyInitialization": true,
-    "noImplicitThis": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "jsx": "react"
   },
-  "include": ["src"],
-  "exclude": ["/node_modules/"]
+  "include": [
+    "src"
+  ]
 }
