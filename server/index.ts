@@ -2,57 +2,27 @@ import { createServer } from "http"
 import express from "express"
 import router from "./router"
 import socketio from "socket.io"
-import { setState, addUser, removeRoom, isGameOver } from "./game"
 import cors from "cors"
+import { addUser, startGame } from "./game"
+import { user } from "./setting"
+let acusers = 0
 
-interface Hash {
-  [details: string] : string;
-} 
-
-// import cors from "cors"
 const PORT = 8080
-let tmp:any;
-let acusers = 0;
-let socketroom:Hash = {};
 const app = express()
 const server = createServer(app)
 const io = socketio(server)
 io.on('connect', async (socket) => {
-
-  socket.on('join', (user, room, callback) => {
-    acusers += 1;
-    console.log(`${acusers} users active`)
-
-    let f = addUser(user, room)
-    if(f === 0) { return callback('Room not available, try different name please') }
-    socket.join(room) 
-    socketroom[socket.id] = room
-    if(f === 1) { socket.emit('assignPlayer', {assign:1}) }
-    if(f === 2) {
-      socket.emit('assignPlayer', {assign:2})
-      io.to(room).emit('game')
-      io.to(room).emit('turnChange', {turn:0})
-    }    
+  acusers+=1; console.log(acusers)
+  socket.on('join', (name:string, room:string, callback) => {
+    let res = addUser(name, room, socket.id)
+    if(res === -1) return(callback('Room Full, Please try other room'))
+    socket.join(room)
+    if(res === 4){
+      let users:user[] = startGame(room)
+      for(let i=0; i<4; ++i) io.to(users[i].id).emit('cards',users[i].cards,i)
+    }
   })
-
-  socket.on('play', ({room, id, pos}:any) => {
-      tmp = setState(room, id, pos);
-      const winner = isGameOver(tmp.board)
-      if(winner === -1){
-        io.to(room).emit('stateChange', tmp.board)
-        io.to(room).emit('turnChange', {turn:tmp.turn})
-      }
-      else io.to(room).emit('gameOver', winner)
-  })
-
-  socket.on('disconnect', () => {
-    tmp = socketroom[socket.id]
-    delete socketroom[socket.id]
-    removeRoom(tmp)
-    io.to(tmp).emit('userLeft')
-    acusers -= 1;
-    console.log(`${acusers} active`)
-  })
+  socket.on('disconnect', () => {acusers-=1; console.log(acusers)})
 })
 // app.use(cors)
 app.use(router)

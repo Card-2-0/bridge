@@ -1,51 +1,37 @@
-let tmp: number | undefined;
-let room:{
-    name:string
-    users:string[]
-    board:number[]
-    turn:number
-}[] = []
+import {shuffleCards, SUIT, room, user, card} from './setting'
 
-export const addUser = (user:string, name:string ) => {
-    tmp = room.findIndex((item) => {return item.name === name})
-    if(tmp === -1) { 
-        room.push({
-            name,
-            users:[user],
-            board: [-1,-1,-1,-1,-1,-1,-1,-1,-1],
-            turn:0
+let tmp:any
+let rooms:room[] = []
+let newuser:user
+
+export const addUser = (username:string, roomname:string, sid:string) => {
+    tmp = rooms.findIndex((r) => r.name === roomname)
+    if(tmp !== -1 && rooms[tmp].users.length === 4) return -1;
+    newuser = {
+        id:sid,
+        name:username,
+        cards:[],
+        room:roomname
+    }
+    if(tmp === -1) {
+            rooms.push({
+            name:roomname,
+            users:[newuser],
+            trump:SUIT.NON,
+            turn:-1
         })
         return 1;
     }
-    if(room[tmp].users.length === 2) return 0;
-    room[tmp].users.push(user);
-    return 2;
-    
+    else rooms[tmp].users.push(newuser)
+    return rooms[tmp].users.length;
 }
 
-export const setState = (name:string, id:number, pos:number) => {
-    tmp = room.findIndex((item) => {return item.name === name})
-    room[tmp].board[pos] = id==1 ? 0 : 1;
-    // console.log(name,room[tmp].board)
-    room[tmp].turn ^= 1;
-    return { board: room[tmp].board, turn: room[tmp].turn};
-}
-
-export const removeRoom = (name:string) => {
-    tmp = room.findIndex((item) => {return item.name === name})
-    if(tmp !== -1)
-    room.splice(tmp,1)
-}
-
-export const isGameOver = (board:number[]) => {
-    if((board[0] !== -1) && (board[0] === board[1]) && (board[1] === board[2])) return board[0]
-    if((board[3] !== -1) && (board[3] === board[4]) && (board[4] === board[5])) return board[3]
-    if((board[6] !== -1) && (board[6] === board[7]) && (board[7] === board[8])) return board[6]
-    if((board[0] !== -1) && (board[3] === board[0]) && (board[3] === board[6])) return board[0]
-    if((board[1] !== -1) && (board[1] === board[4]) && (board[4] === board[7])) return board[1]
-    if((board[2] !== -1) && (board[2] === board[5]) && (board[5] === board[8])) return board[2]
-    if((board[2] !== -1) && (board[2] === board[4]) && (board[4] === board[6])) return board[2]
-    if((board[0] !== -1) && (board[0] === board[4]) && (board[4] === board[8])) return board[0]
-    for(let i=0; i<9; ++i) if(board[i] === -1) return -1;
-    return 2;
+export const startGame = (roomname:string) => {
+    tmp = rooms.findIndex((r) => r.name === roomname)
+    let allcards = shuffleCards()
+    for(let i=0; i<52; ++i) rooms[tmp].users[i%4].cards.push({
+        suit:Math.floor(allcards[i]/13),
+        value:(allcards[i])%13
+    })
+    return rooms[tmp].users;
 }
