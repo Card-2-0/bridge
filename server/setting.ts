@@ -1,14 +1,6 @@
-export enum SUIT {
-    CLB,
-    HRT,
-    DMD,
-    SPD,
-    NON
-}
-
 export type card = {
-    suit:SUIT
-    value:number
+    suit:string
+    value:string
 }
 
 export type user = {
@@ -21,9 +13,27 @@ export type user = {
 export type room = {
     name:string
     users:user[]
-    trump:number
+    trump:string
     turn:number
 }
+
+export const values = [
+    "A",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "J",
+    "Q",
+    "K",
+  ];
+
+export const suits = ["HRT", "SPD", "DMD", "CLB"];
 
 export const shuffleCards = () => {
     let array:number[] = []

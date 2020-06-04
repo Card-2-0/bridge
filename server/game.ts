@@ -1,4 +1,4 @@
-import {shuffleCards, SUIT, room, user, card} from './setting'
+import {shuffleCards, room, user, card, values, suits} from './setting'
 
 let tmp:any
 let rooms:room[] = []
@@ -17,7 +17,7 @@ export const addUser = (username:string, roomname:string, sid:string) => {
             rooms.push({
             name:roomname,
             users:[newuser],
-            trump:SUIT.NON,
+            trump:"",
             turn:-1
         })
         return 1;
@@ -30,8 +30,8 @@ export const startGame = (roomname:string) => {
     tmp = rooms.findIndex((r) => r.name === roomname)
     let allcards = shuffleCards()
     for(let i=0; i<52; ++i) rooms[tmp].users[i%4].cards.push({
-        suit:Math.floor(allcards[i]/13),
-        value:(allcards[i])%13
+        suit: suits[Math.floor(allcards[i]/13)],
+        value: values[(allcards[i])%13]
     })
     return rooms[tmp].users;
 }

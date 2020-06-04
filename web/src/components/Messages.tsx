@@ -9,7 +9,7 @@ export const Messages = () => {
     const [name, setName] = useState('')
     const [room, setRoom] = useState('')
     const [id, setId] = useState(-1)
-    const [cards, setCards] = useState([{suit:1,value:1}])
+    const [cards, setCards] = useState([{suit:"",value:""}])
 
     useEffect(() => {
         socket = io(ENDPOINT)
