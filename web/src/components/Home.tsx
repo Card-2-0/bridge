@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { cards, Card } from "../utils";
+import { Trump } from "./Trump";
 export const Home = () => {
   function shuffle(array: any) {
     array.sort(() => Math.random() - 0.5);
@@ -162,6 +163,7 @@ export const Home = () => {
           );
         })}
       </ul>
+      <Trump />
     </div>
   );
 };

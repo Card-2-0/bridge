@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import queryString from "query-string";
 import io from "socket.io-client";
 import { Game } from "./Game";
+import { Trump } from "./Trump";
 const ENDPOINT = "http://localhost:8080/";
 let socket: any;
 
@@ -53,6 +54,7 @@ export const Messages = () => {
               );
             })}
           </ul>
+          <Trump />
         </div>
       )}
     </div>
