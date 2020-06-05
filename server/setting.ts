@@ -19,8 +19,8 @@ export type room = {
   target: number[];
   tchoose: number;
   round: any[];
-  t1: number;
-  t2: number;
+  scores: number[];
+  suitofround: string
 };
 
 export const values = [

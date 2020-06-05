@@ -23,8 +23,8 @@ export const addUser = (username: string, roomname: string, sid: string) => {
       target: [-1, -1],
       tchoose: 0,
       round: [],
-      t1: 0,
-      t2: 0,
+      scores: [0,0],
+      suitofround: ""
     });
     return 1;
   } else rooms[tmp].users.push(newuser);
@@ -106,15 +106,16 @@ export const updateRound = (
   val: string,
   suit: string
 ) => {
-  const rcroom: room | undefined = rooms.find((r) => r.name === room);
+  tmp = rooms.findIndex((r) => r.name === room);
   let value = calculateVal(val);
-  rcroom?.round.push({
+  rooms[tmp].round.push({
     id: id + 1,
     value,
     suit,
   });
-  if (rcroom?.round.length === 4) return -1;
-  else return (rcroom?.turn!+rcroom?.round.length!)%4;
+  if (rooms[tmp].round.length === 1) rooms[tmp].suitofround = suit 
+  if (rooms[tmp].round.length === 4) return -1;
+  else return (rooms[tmp].turn!+rooms[tmp].round.length!)%4;
 };
 
 const calculateVal = (val: string) => {
@@ -126,25 +127,24 @@ const calculateVal = (val: string) => {
 };
 
 export const winner = (room: string) => {
-  const rcroom: room | undefined = rooms.find((r) => r.name === room);
-  if (!rcroom) throw new Error("");
-  const trumpPlays = rcroom?.round.filter((r) => r.suit === rcroom.trump);
-  console.log(trumpPlays);
+  tmp = rooms.findIndex((r) => r.name === room);
+  if (tmp === -1) throw new Error("");
+  const trumpPlays = rooms[tmp].round.filter((r) => r.suit === rooms[tmp].trump);
+  const suitPlays = rooms[tmp].round.filter((r) => r.suit === rooms[tmp].suitofround);
   let higgest: any;
-  if (trumpPlays) {
+  if (trumpPlays.length !== 0) {
     trumpPlays.sort((a, b) => parseInt(b.val) - parseInt(a.val));
     higgest = trumpPlays[0];
   } else {
-    rcroom?.round.sort((a, b) => parseInt(b.val) - parseInt(a.val));
-    higgest = rcroom?.round[0];
+    suitPlays.sort((a, b) => parseInt(b.val) - parseInt(a.val));
+    higgest = suitPlays[0];
   }
-  console.log(higgest);
-  rcroom.round = [];
+  rooms[tmp].round = [];
+  console.log(higgest.id)
+  rooms[tmp].scores[higgest.id % 2] += 1
   if (higgest.id % 2) {
-    rcroom.t1 = rcroom.t1 + 1;
     return "TEAM 1";
   } else {
-    rcroom.t2 = rcroom.t2 + 1;
     return "TEAM 2";
   }
 };
