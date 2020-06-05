@@ -16,8 +16,8 @@ export type room = {
   trump: string;
   turn: number;
   passes: number;
-  target: number[]
-  tchoose: number
+  target: number[];
+  tchoose: number;
 };
 
 export const values = [
