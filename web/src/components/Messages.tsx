@@ -25,6 +25,9 @@ export const Messages = () => {
   const [targetChoose, setTargetChoose] = useState(-1);
   const [trumpPlayer, setTrumpPlayer] = useState(-1);
   const [roundTurn, setRoundTurn] = useState(false)
+  const [cardsOnRound, setCardsOnRound] = useState<any[]>([])
+  const [message, setMessage] = useState("")
+  
   useEffect(() => {
     socket = io(ENDPOINT);
     const { name, room }: any = queryString.parse(window.location.search);
@@ -72,18 +75,19 @@ export const Messages = () => {
       if(turn === id) setRoundTurn(true)
       else setRoundTurn(false)
     })
-    socket.on("roundstatus", (result: any) => {
-      console.log(result);
+    socket.on("roundDone", (result: any) => {
+      setMessage(`Player ${result+1} won the round`)
     });
+    socket.on("roundStatus", (round:any) => {
+      setCardsOnRound(round)
+    })
   });
 
   const onTrump = (trumpSuit: string, trumpValue: string, pass: boolean) => {
-    console.log(trumpValue, trumpSuit, pass);
     socket.emit("trumpPlay", trumpValue, trumpSuit, pass, room, id);
   };
 
   const onChoose = (tar: number) => {
-    console.log(tar);
     setTargetChoose(1);
     socket.emit("targetSelect", id, tar, room);
   };
@@ -93,7 +97,6 @@ export const Messages = () => {
       if (c.suit !== suit || c.value !== val) return c;
     });
     setCards(filter);
-    console.log(filter);
     socket.emit("round", room, id, val, suit);
   };
   return (
@@ -123,6 +126,13 @@ export const Messages = () => {
         <TargetChoose handleSubmit={onChoose} op={targetChoose} trump={trump} />
       )}
       {game && <Game trump={trump} target={target} />}
+      {cardsOnRound && 
+      <div>
+        <ol>
+          {cardsOnRound.map((card,i) => <li key={i}>{card.suit}, {card.value} from {card.id+1}</li>)}
+        </ol>
+      </div>}
+      {cardsOnRound.length === 4 && <p>{message}</p>}
     </div>
   );
 };

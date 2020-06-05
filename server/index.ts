@@ -9,11 +9,11 @@ import {
   trumpPlay,
   getTrump,
   getTarget,
-  getUsers,
   setTarget,
   updateRound,
   winner,
   getTurn,
+  getRound
 } from "./game";
 import { user } from "./setting";
 let acusers = 0;
@@ -70,11 +70,13 @@ io.on("connect", async (socket) => {
   });
   socket.on("round", (room: string, id: number, val: string, suit: string) => {
     let nxtturn = updateRound(room, id, val, suit);
+    io.to(room).emit("roundStatus", getRound(room))
     if (nxtturn === -1) {
       const result = winner(room);
-      io.to(room).emit("roundstatus", result);
+      io.to(room).emit("roundDone", result);
+      io.to(room).emit("roundTurn", result)
     } else {
-      io.to(room).emit("roundTurn", nxtturn);
+      io.to(room).emit("roundTurn", nxtturn, getRound(room));
     }
   });
   socket.on("disconnect", () => {

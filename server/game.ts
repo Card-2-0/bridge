@@ -100,6 +100,11 @@ export const getTurn = (roomname: string) => {
   return rooms[tmp].turn;
 };
 
+export const getRound = (roomname: string) => {
+  tmp = rooms.findIndex((r) => r.name === roomname);
+  return rooms[tmp].round;
+};
+
 export const updateRound = (
   room: string,
   id: number,
@@ -109,7 +114,7 @@ export const updateRound = (
   tmp = rooms.findIndex((r) => r.name === room);
   let value = calculateVal(val);
   rooms[tmp].round.push({
-    id: id + 1,
+    id: id,
     value,
     suit,
   });
@@ -133,18 +138,23 @@ export const winner = (room: string) => {
   const suitPlays = rooms[tmp].round.filter((r) => r.suit === rooms[tmp].suitofround);
   let higgest: any;
   if (trumpPlays.length !== 0) {
-    trumpPlays.sort((a, b) => parseInt(b.val) - parseInt(a.val));
+    trumpPlays.sort((a, b) => parseInt(b.value) - parseInt(a.value));
     higgest = trumpPlays[0];
   } else {
-    suitPlays.sort((a, b) => parseInt(b.val) - parseInt(a.val));
+    suitPlays.sort((a, b) => parseInt(b.value) - parseInt(a.value));
     higgest = suitPlays[0];
   }
+  console.log(rooms[tmp].round)
   rooms[tmp].round = [];
   console.log(higgest.id)
   rooms[tmp].scores[higgest.id % 2] += 1
   if (higgest.id % 2) {
-    return "TEAM 1";
+    console.log("TEAM 1")
   } else {
-    return "TEAM 2";
+    console.log("TEAM 2")
   }
+  console.log(rooms[tmp].scores)
+  rooms[tmp].round = []
+  rooms[tmp].turn = higgest.id
+  return(higgest.id)
 };
