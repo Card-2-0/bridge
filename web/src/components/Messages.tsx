@@ -49,7 +49,7 @@ export const Messages = () => {
         else setTrumpChoose(false);
         setTrump(trumpsuit);
         setNum(parseInt(trumpvalue) + 1);
-        if (pid) setTrumpPlayer(parseInt(pid) + 1);
+        if (pid !== undefined) setTrumpPlayer(parseInt(pid) + 1);
       }
     );
     socket.on("trumpDone", (finalTrump: string, targets: number[]) => {
