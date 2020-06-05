@@ -69,7 +69,7 @@ io.on("connect", async (socket) => {
   });
   socket.on("round", (room: string, id: number, val: string, suit: string) => {
     let nxtturn = updateRound(room, id, val, suit);
-    if (!nxtturn) {
+    if (nxtturn === -1) {
       const result = winner(room);
       io.to(room).emit("roundstatus", result);
     } else {

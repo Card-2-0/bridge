@@ -113,10 +113,10 @@ export const updateRound = (
 };
 
 const calculateVal = (val: string) => {
-  if (val === "a") return "14";
-  else if (val === "j") return "11";
-  else if (val === "q") return "12";
-  else if (val === "k") return "13";
+  if (val === "A") return "14";
+  else if (val === "J") return "11";
+  else if (val === "Q") return "12";
+  else if (val === "K") return "13";
   else return val;
 };
 
@@ -124,6 +124,7 @@ export const winner = (room: string) => {
   const rcroom: room | undefined = rooms.find((r) => r.name === room);
   if (!rcroom) throw new Error("");
   const trumpPlays = rcroom?.round.filter((r) => r.suit === rcroom.trump);
+  console.log(trumpPlays);
   let higgest: any;
   if (trumpPlays) {
     trumpPlays.sort((a, b) => parseInt(b.val) - parseInt(a.val));
@@ -132,6 +133,7 @@ export const winner = (room: string) => {
     rcroom?.round.sort((a, b) => parseInt(b.val) - parseInt(a.val));
     higgest = rcroom?.round[0];
   }
+  console.log(higgest);
   rcroom.round = [];
   if (higgest.id % 2) {
     rcroom.t1 = rcroom.t1 + 1;

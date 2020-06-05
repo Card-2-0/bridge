@@ -67,6 +67,9 @@ export const Messages = () => {
       setGame(true);
       setTargetChoose(-1);
     });
+    socket.on("roundstatus", (result: any) => {
+      console.log(result);
+    });
   });
 
   const onTrump = (trumpSuit: string, trumpValue: string, pass: boolean) => {
@@ -78,6 +81,15 @@ export const Messages = () => {
     console.log(tar);
     setTargetChoose(1);
     socket.emit("targetSelect", id, tar, room);
+  };
+
+  const handleDispatch = (val: string, suit: string) => {
+    const filter = cards.filter((c) => {
+      if (c.suit !== suit || c.value !== val) return c;
+    });
+    setCards(filter);
+    console.log(filter);
+    socket.emit("round", room, id, val, suit);
   };
   return (
     <div>
@@ -96,7 +108,9 @@ export const Messages = () => {
           </p>
         </div>
       )}
-      {cards.length > 1 && <UserCards cards={cards} game={game} />}
+      {cards.length > 1 && (
+        <UserCards cards={cards} game={game} handleDispatch={handleDispatch} />
+      )}
       {trumpChoose && <Trump num={num} handleSubmit={onTrump} trump={trump} />}
       {targetChoose === -1 && !game && trump && <p>Current Trump : {trump}</p>}
       {trumpPlayer !== -1 && <p>Trump Placed By {trumpPlayer}</p>}
