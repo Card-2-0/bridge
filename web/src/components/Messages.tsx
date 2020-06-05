@@ -24,6 +24,7 @@ export const Messages = () => {
   const [target, setTarget] = useState([-1, -1]);
   const [targetChoose, setTargetChoose] = useState(-1);
   const [trumpPlayer, setTrumpPlayer] = useState(-1);
+  const [roundTurn, setRoundTurn] = useState(false)
   useEffect(() => {
     socket = io(ENDPOINT);
     const { name, room }: any = queryString.parse(window.location.search);
@@ -67,6 +68,10 @@ export const Messages = () => {
       setGame(true);
       setTargetChoose(-1);
     });
+    socket.on("roundTurn", (turn:number) => {
+      if(turn === id) setRoundTurn(true)
+      else setRoundTurn(false)
+    })
     socket.on("roundstatus", (result: any) => {
       console.log(result);
     });
@@ -109,7 +114,7 @@ export const Messages = () => {
         </div>
       )}
       {cards.length > 1 && (
-        <UserCards cards={cards} game={game} handleDispatch={handleDispatch} />
+        <UserCards cards={cards} game={roundTurn} handleDispatch={handleDispatch} />
       )}
       {trumpChoose && <Trump num={num} handleSubmit={onTrump} trump={trump} />}
       {targetChoose === -1 && !game && trump && <p>Current Trump : {trump}</p>}

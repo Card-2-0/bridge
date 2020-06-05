@@ -95,6 +95,11 @@ export const getUsers = (roomname: string) => {
   return rooms[tmp].users;
 };
 
+export const getTurn = (roomname: string) => {
+  tmp = rooms.findIndex((r) => r.name === roomname);
+  return rooms[tmp].turn;
+};
+
 export const updateRound = (
   room: string,
   id: number,
@@ -109,7 +114,7 @@ export const updateRound = (
     suit,
   });
   if (rcroom?.round.length === 4) return -1;
-  else return rcroom?.round;
+  else return (rcroom?.turn!+rcroom?.round.length!)%4;
 };
 
 const calculateVal = (val: string) => {

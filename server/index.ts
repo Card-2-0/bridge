@@ -13,6 +13,7 @@ import {
   setTarget,
   updateRound,
   winner,
+  getTurn,
 } from "./game";
 import { user } from "./setting";
 let acusers = 0;
@@ -51,7 +52,6 @@ io.on("connect", async (socket) => {
       if (nxtturn === -1) {
         let tar = getTarget(room);
         io.to(room).emit("trumpDone", getTrump(room), tar);
-        let users = getUsers(room);
         if (tar[0] === 0) io.to(room).emit("targetChoose", 0);
         else io.to(room).emit("targetChoose", 1);
         return;
@@ -65,6 +65,7 @@ io.on("connect", async (socket) => {
   socket.on("targetSelect", (id: number, tar: number, room: string) => {
     if (setTarget(id, tar, room)) {
       io.to(room).emit("targetSelectDone", getTarget(room));
+      io.to(room).emit("roundTurn", getTurn(room))
     }
   });
   socket.on("round", (room: string, id: number, val: string, suit: string) => {
@@ -73,7 +74,7 @@ io.on("connect", async (socket) => {
       const result = winner(room);
       io.to(room).emit("roundstatus", result);
     } else {
-      io.to(room).emit("roundstatus", nxtturn);
+      io.to(room).emit("roundTurn", nxtturn);
     }
   });
   socket.on("disconnect", () => {
