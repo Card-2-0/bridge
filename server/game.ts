@@ -22,6 +22,9 @@ export const addUser = (username: string, roomname: string, sid: string) => {
       passes: 0,
       target: [-1, -1],
       tchoose: 0,
+      round: [],
+      t1: 0,
+      t2: 0,
     });
     return 1;
   } else rooms[tmp].users.push(newuser);
@@ -96,6 +99,45 @@ export const updateRound = (
   room: string,
   id: number,
   val: string,
-  suit: string,
-  playnum: string
-) => {};
+  suit: string
+) => {
+  const rcroom: room | undefined = rooms.find((r) => r.name === room);
+  let value = calculateVal(val);
+  rcroom?.round.push({
+    id: id + 1,
+    value,
+    suit,
+  });
+  if (rcroom?.round.length === 4) return -1;
+  else return rcroom?.round;
+};
+
+const calculateVal = (val: string) => {
+  if (val === "a") return "14";
+  else if (val === "j") return "11";
+  else if (val === "q") return "12";
+  else if (val === "k") return "13";
+  else return val;
+};
+
+export const winner = (room: string) => {
+  const rcroom: room | undefined = rooms.find((r) => r.name === room);
+  if (!rcroom) throw new Error("");
+  const trumpPlays = rcroom?.round.filter((r) => r.suit === rcroom.trump);
+  let higgest: any;
+  if (trumpPlays) {
+    trumpPlays.sort((a, b) => parseInt(b.val) - parseInt(a.val));
+    higgest = trumpPlays[0];
+  } else {
+    rcroom?.round.sort((a, b) => parseInt(b.val) - parseInt(a.val));
+    higgest = rcroom?.round[0];
+  }
+  rcroom.round = [];
+  if (higgest.id % 2) {
+    rcroom.t1 = rcroom.t1 + 1;
+    return "TEAM 1";
+  } else {
+    rcroom.t2 = rcroom.t2 + 1;
+    return "TEAM 2";
+  }
+};

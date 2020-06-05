@@ -12,6 +12,7 @@ import {
   getUsers,
   setTarget,
   updateRound,
+  winner,
 } from "./game";
 import { user } from "./setting";
 let acusers = 0;
@@ -66,12 +67,15 @@ io.on("connect", async (socket) => {
       io.to(room).emit("targetSelectDone", getTarget(room));
     }
   });
-  socket.on(
-    "round",
-    (room: string, id: number, val: string, suit: string, playnum: string) => {
-      updateRound(room, id, val, suit, playnum);
+  socket.on("round", (room: string, id: number, val: string, suit: string) => {
+    let nxtturn = updateRound(room, id, val, suit);
+    if (!nxtturn) {
+      const result = winner(room);
+      io.to(room).emit("roundstatus", result);
+    } else {
+      io.to(room).emit("roundstatus", nxtturn);
     }
-  );
+  });
   socket.on("disconnect", () => {
     acusers -= 1;
     console.log(acusers);

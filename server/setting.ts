@@ -18,6 +18,9 @@ export type room = {
   passes: number;
   target: number[];
   tchoose: number;
+  round: any[];
+  t1: number;
+  t2: number;
 };
 
 export const values = [
