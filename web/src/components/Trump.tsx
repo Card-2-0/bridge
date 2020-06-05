@@ -1,11 +1,10 @@
 import React, { useState } from "react";
-export const Trump = () => {
-  const [trumpSuit, setTrumpSuit] = useState("");
-  const [trumpValue, setTrumpVal] = useState("");
-  const [currentVal, setCurrentVal] = useState("5");
-  let i: number = parseInt(currentVal);
+
+export const Trump = ({num, handleSubmit}:any) => {
+  const [trumpSuit, setTrumpSuit] = useState("SPADES");
+  const [trumpValue, setTrumpVal] = useState(String(num));
   let arr = [];
-  for (i; i < 13; i++) {
+  for (let i=num; i < 14; i++) {
     arr.push(i.toString());
   }
   return (
@@ -19,11 +18,11 @@ export const Trump = () => {
       </select>
       <select name="val" onChange={(e) => setTrumpVal(e.target.value)}>
         {arr.map((val) => (
-          <option value={val}>{val}</option>
+          <option key={val} value={val}>{val}</option>
         ))}
       </select>
-      <button disabled={!trumpSuit || !trumpValue}>Confirm Trump</button>
-      <button>Pass</button>
+      <button onClick={(e) => {handleSubmit(trumpSuit, trumpValue, true)}}>Confirm Trump</button>
+      <button onClick={(e) => {handleSubmit("",String(num-1),false)}}>Pass</button>
     </div>
   );
 };

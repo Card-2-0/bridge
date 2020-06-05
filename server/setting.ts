@@ -15,6 +15,9 @@ export type room = {
   users: user[];
   trump: string;
   turn: number;
+  passes: number;
+  target: number[]
+  tchoose: number
 };
 
 export const values = [

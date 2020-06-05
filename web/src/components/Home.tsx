@@ -163,7 +163,7 @@ export const Home = () => {
           );
         })}
       </ul>
-      <Trump />
+      <Trump num={1}/>
     </div>
   );
 };
