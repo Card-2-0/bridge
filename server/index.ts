@@ -11,17 +11,16 @@ import {
   getTarget,
   setTarget,
   updateRound,
-  winner,
   getTurn,
   getRound,
   getRoundSuit,
-  removeRoom
+  removeRoom,
+  resetRoom
 } from "./game";
 import { user } from "./setting";
 interface Hash {
   [details: string] : string;
 } 
-let acusers = 0;
 let socketroom:Hash = {};
 
 const PORT = 8080;
@@ -29,8 +28,7 @@ const app = express();
 const server = createServer(app);
 const io = socketio(server);
 io.on("connect", async (socket) => {
-  acusers += 1;
-  console.log(acusers);
+  // console.log(acusers);
 
   socket.on("join", (name: string, room: string, callback) => {
     let res = addUser(name, room, socket.id);
@@ -54,7 +52,7 @@ io.on("connect", async (socket) => {
       room: string,
       id: any
     ) => {
-      console.log(trumpsuit, trumpvalue, pass);
+      // console.log(trumpsuit, trumpvalue, pass);
       let nxtturn = trumpPlay(trumpvalue, trumpsuit, pass, room);
       if (nxtturn === -1) {
         let tar = getTarget(room);
@@ -80,23 +78,24 @@ io.on("connect", async (socket) => {
     let round = getRound(room)
     io.to(room).emit("roundStatus", round, round.length === 4 ? "any":getRoundSuit(room))
     if (nxtturn === -1) {
-      const result = winner(room);
-      io.to(room).emit("roundDone", result);
-      io.to(room).emit("roundTurn", result)
+      // const result = winner(room);
+      // io.to(room).emit("roundDone", result);
+      // io.to(room).emit("roundTurn", result)
     } else {
       io.to(room).emit("roundTurn", nxtturn, getRound(room));
     }
   });
-  socket.on("gameDone", () => {
-
+  socket.on("roundDone", (room, winner) => {
+    let res = resetRoom(room, winner)
+    io.to(room).emit("roundTurn", winner)
+    if(res) io.to(room).emit("gameDone")
   })
   socket.on("disconnect", () => {
     let tmp = socketroom[socket.id]
     delete socketroom[socket.id]
     removeRoom(tmp)
     io.to(tmp).emit('userLeft')
-    acusers -= 1;
-    console.log(acusers);
+    // console.log(acusers);
   });
 });
 // app.use(cors)

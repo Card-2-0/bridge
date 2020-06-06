@@ -10,11 +10,13 @@ import { CardsOnTable } from "./CardsOnTable";
 import { Winner } from "./Winner";
 
 const calcScore = (tar: number, sco: number) => {
-  if (sco < tar) return 10 * (tar - sco);
-  else return 10 * tar + sco - tar;
+  console.log(tar,sco)
+  if (sco < tar) return (10*(sco-tar));
+  else return ((10*tar) + (sco - tar));
 };
 
-const ENDPOINT = "http://localhost:8080/";
+// const ENDPOINT = "http://localhost:8080/";
+const ENDPOINT = "https://still-beyond-54734.herokuapp.com/"
 let socket: any;
 let tmp: any = null;
 const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
@@ -34,7 +36,6 @@ export const Messages = () => {
   const [trumpPlayer, setTrumpPlayer] = useState(-1);
   const [roundTurn, setRoundTurn] = useState(false);
   const [cardsOnRound, setCardsOnRound] = useState<any[]>([]);
-  const [Roundmessage, setRoundMessage] = useState("");
   const [roundSuit, setRoundSuit] = useState("any");
   const [userLeft, setUserLeft] = useState(false);
   const [score, setScore] = useState([0, 0]);
@@ -92,11 +93,7 @@ export const Messages = () => {
       if (turn === id) setRoundTurn(true);
       else setRoundTurn(false);
     });
-    socket.on("roundDone", (result: any) => {
-      setRoundMessage(`Player ${result + 1} won the round`);
-      if (result % 2 === 1) setScore([score[0], score[1] + 1]);
-      else setScore([score[0] + 1, score[1]]);
-    });
+    
     socket.on("roundStatus", (round: any, suitofround: string) => {
       setRoundSuit(suitofround);
       setCardsOnRound(round);
@@ -114,16 +111,17 @@ export const Messages = () => {
       setCardsOnRound([]);
       socket.disconnect();
     });
-    if (score[0] + score[1] === 13) {
-      socket.emit("gameDone");
+    socket.on("gameDone", () => {
       setTotScore([
         totScore[0] + calcScore(target[0], score[0]),
         totScore[1] + calcScore(target[1], score[1]),
       ]);
-      setNoOfGames(noOfGames + 1);
-      setCards([]);
       setCardsOnRound([]);
-    }
+      setScore([0,0])
+      setNoOfGames(noOfGames + 1);
+      setTarget([0,0])
+      setCards([]);
+    });
   });
 
   const onTrump = (trumpSuit: string, trumpValue: string, pass: boolean) => {
@@ -142,6 +140,13 @@ export const Messages = () => {
     setCards(filter);
     socket.emit("round", room, id, val, suit);
   };
+
+  const WinnerHandle = (winner:number) => {
+    if(winner === id) socket.emit("roundDone" , room, winner)
+    if (winner % 2 === 1) setScore([score[0], score[1] + 1]);
+    else setScore([score[0] + 1, score[1]]);
+  }
+
   return (
     <div>
       <h1>Hi {name ? name : "There"}</h1>
@@ -174,9 +179,8 @@ export const Messages = () => {
         <CardsOnTable cards={cardsOnRound} users={usersinfo} />
       )}
       {cardsOnRound.length === 4 && (
-        <Winner cards={cardsOnRound} trump={trump} />
+        <Winner cards={cardsOnRound} trump={trump} call={WinnerHandle}/>
       )}
-      {cardsOnRound.length === 4 && <p>{Roundmessage}</p>}
       {userLeft && <UserLeft />}
       {cards.length >= 1 && (
         <UserCards

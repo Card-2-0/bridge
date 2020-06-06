@@ -23,9 +23,9 @@ export const addUser = (username: string, roomname: string, sid: string) => {
       target: [-1, -1],
       tchoose: 0,
       round: [],
-      scores: [0,0],
       suitofround: "any",
-      preStart:0
+      preStart:0,
+      roundsDone:0
     });
     return 1;
   } else rooms[tmp].users.push(newuser);
@@ -137,28 +137,36 @@ const calculateVal = (val: string) => {
   else return val;
 };
 
-export const winner = (room: string) => {
-  tmp = rooms.findIndex((r) => r.name === room);
-  if (tmp === -1) throw new Error("");
-  const trumpPlays = rooms[tmp].round.filter((r) => r.suit === rooms[tmp].trump);
-  const suitPlays = rooms[tmp].round.filter((r) => r.suit === rooms[tmp].suitofround);
-  let higgest: any;
-  if (trumpPlays.length !== 0) {
-    trumpPlays.sort((a, b) => parseInt(b.value) - parseInt(a.value));
-    higgest = trumpPlays[0];
-  } else {
-    suitPlays.sort((a, b) => parseInt(b.value) - parseInt(a.value));
-    higgest = suitPlays[0];
-  }
-  rooms[tmp].round = [];
-  rooms[tmp].scores[higgest.id % 2] += 1
+// export const winner = (room: string) => {
+//   tmp = rooms.findIndex((r) => r.name === room);
+//   if (tmp === -1) throw new Error("");
+//   const trumpPlays = rooms[tmp].round.filter((r) => r.suit === rooms[tmp].trump);
+//   const suitPlays = rooms[tmp].round.filter((r) => r.suit === rooms[tmp].suitofround);
+//   let higgest: any;
+//   if (trumpPlays.length !== 0) {
+//     trumpPlays.sort((a, b) => parseInt(b.value) - parseInt(a.value));
+//     higgest = trumpPlays[0];
+//   } else {
+//     suitPlays.sort((a, b) => parseInt(b.value) - parseInt(a.value));
+//     higgest = suitPlays[0];
+//   }
+//   rooms[tmp].round = [];
+//   rooms[tmp].turn = higgest.id
+//   return(higgest.id)
+// };
+
+export const resetRoom = (name:string, winner:number) => {
+  tmp = rooms.findIndex((item) => {return item.name === name})
+  rooms[tmp].turn = winner
   rooms[tmp].round = []
-  rooms[tmp].turn = higgest.id
-  return(higgest.id)
-};
+  rooms[tmp].roundsDone += 1
+  if(rooms[tmp].roundsDone === 13) return true
+  else return false
+}
 
 export const removeRoom = (name:string) => {
   tmp = rooms.findIndex((item) => {return item.name === name})
+  // console.log(tmp, name)
   if(tmp !== -1)
   rooms.splice(tmp,1)
 }

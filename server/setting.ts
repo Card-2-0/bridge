@@ -19,9 +19,9 @@ export type room = {
   target: number[];
   tchoose: number;
   round: any[];
-  scores: number[];
   suitofround: string,
-  preStart: number
+  preStart: number,
+  roundsDone:number
 };
 
 export const values = [
