@@ -149,9 +149,7 @@ export const winner = (room: string) => {
     suitPlays.sort((a, b) => parseInt(b.value) - parseInt(a.value));
     higgest = suitPlays[0];
   }
-  console.log(rooms[tmp].round)
   rooms[tmp].round = [];
-  console.log(higgest.id)
   rooms[tmp].scores[higgest.id % 2] += 1
   if (higgest.id % 2) {
     console.log("TEAM 1")
@@ -163,3 +161,9 @@ export const winner = (room: string) => {
   rooms[tmp].turn = higgest.id
   return(higgest.id)
 };
+
+export const removeRoom = (name:string) => {
+  tmp = rooms.findIndex((item) => {return item.name === name})
+  if(tmp !== -1)
+  rooms.splice(tmp,1)
+}

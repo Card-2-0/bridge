@@ -5,6 +5,7 @@ import { Trump } from "./Trump";
 import { UserCards } from "./UserCards";
 import { Game } from "./Game";
 import { TargetChoose } from "./TargetChoose";
+import { UserLeft } from "./UserLeft";
 
 const ENDPOINT = "http://localhost:8080/";
 let socket: any;
@@ -16,7 +17,7 @@ export const Messages = () => {
   const [room, setRoom] = useState("");
   const [usersinfo, setUsersInfo] = useState(tmp);
   const [id, setId] = useState(-1);
-  const [cards, setCards] = useState([{ suit: "", value: "" }]);
+  const [cards, setCards] = useState<{suit:string,value:string}[]>([]);
   const [trumpChoose, setTrumpChoose] = useState(false);
   const [trump, setTrump] = useState("");
   const [num, setNum] = useState(0);
@@ -26,8 +27,9 @@ export const Messages = () => {
   const [trumpPlayer, setTrumpPlayer] = useState(-1);
   const [roundTurn, setRoundTurn] = useState(false)
   const [cardsOnRound, setCardsOnRound] = useState<any[]>([])
-  const [message, setMessage] = useState("")
+  const [Roundmessage, setRoundMessage] = useState("")
   const [roundSuit, setRoundSuit] = useState("any")
+  const [userLeft, setUserLeft] = useState(false)
   
   useEffect(() => {
     socket = io(ENDPOINT);
@@ -77,11 +79,23 @@ export const Messages = () => {
       else setRoundTurn(false)
     })
     socket.on("roundDone", (result: any) => {
-      setMessage(`Player ${result+1} won the round`)
+      setRoundMessage(`Player ${result+1} won the round`)
     });
     socket.on("roundStatus", (round:any, suitofround:string) => {
       setRoundSuit(suitofround)
       setCardsOnRound(round)
+    })
+    socket.on("userLeft", () => {
+      setGame(false)
+      setTargetChoose(-1)
+      setTrump("")
+      setTrumpPlayer(-1)
+      setTrumpChoose(false)
+      setCards([])
+      setUsersInfo(null)
+      setId(-1)
+      setUserLeft(true)
+      socket.disconnect()
     })
   });
 
@@ -118,7 +132,7 @@ export const Messages = () => {
           </p>
         </div>
       )}
-      {cards.length > 1 && (
+      {cards.length >= 1 && (
         <UserCards cards={cards} game={roundTurn} handleDispatch={handleDispatch} roundSuit={roundSuit} />
       )}
       {trumpChoose && <Trump num={num} handleSubmit={onTrump} trump={trump} />}
@@ -134,7 +148,8 @@ export const Messages = () => {
           {cardsOnRound.map((card,i) => <li key={i}>{card.suit}, {card.value} from {card.id+1}</li>)}
         </ol>
       </div>}
-      {cardsOnRound.length === 4 && <p>{message}</p>}
+      {cardsOnRound.length === 4 && <p>{Roundmessage}</p>}
+      {userLeft && <UserLeft />}
     </div>
   );
 };

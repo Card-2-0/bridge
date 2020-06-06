@@ -14,10 +14,15 @@ import {
   winner,
   getTurn,
   getRound,
-  getRoundSuit
+  getRoundSuit,
+  removeRoom
 } from "./game";
 import { user } from "./setting";
+interface Hash {
+  [details: string] : string;
+} 
 let acusers = 0;
+let socketroom:Hash = {};
 
 const PORT = 8080;
 const app = express();
@@ -31,6 +36,7 @@ io.on("connect", async (socket) => {
     let res = addUser(name, room, socket.id);
     if (res === -1) return callback("Room Full, Please try other room");
     socket.join(room);
+    socketroom[socket.id] = room
     if (res === 4) {
       let users: user[] = startGame(room);
       for (let i = 0; i < 4; ++i)
@@ -82,6 +88,10 @@ io.on("connect", async (socket) => {
     }
   });
   socket.on("disconnect", () => {
+    let tmp = socketroom[socket.id]
+    delete socketroom[socket.id]
+    removeRoom(tmp)
+    io.to(tmp).emit('userLeft')
     acusers -= 1;
     console.log(acusers);
   });
