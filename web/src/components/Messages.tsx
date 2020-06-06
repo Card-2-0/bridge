@@ -27,6 +27,7 @@ export const Messages = () => {
   const [roundTurn, setRoundTurn] = useState(false)
   const [cardsOnRound, setCardsOnRound] = useState<any[]>([])
   const [message, setMessage] = useState("")
+  const [roundSuit, setRoundSuit] = useState("any")
   
   useEffect(() => {
     socket = io(ENDPOINT);
@@ -78,7 +79,8 @@ export const Messages = () => {
     socket.on("roundDone", (result: any) => {
       setMessage(`Player ${result+1} won the round`)
     });
-    socket.on("roundStatus", (round:any) => {
+    socket.on("roundStatus", (round:any, suitofround:string) => {
+      setRoundSuit(suitofround)
       setCardsOnRound(round)
     })
   });
@@ -117,7 +119,7 @@ export const Messages = () => {
         </div>
       )}
       {cards.length > 1 && (
-        <UserCards cards={cards} game={roundTurn} handleDispatch={handleDispatch} />
+        <UserCards cards={cards} game={roundTurn} handleDispatch={handleDispatch} roundSuit={roundSuit} />
       )}
       {trumpChoose && <Trump num={num} handleSubmit={onTrump} trump={trump} />}
       {targetChoose === -1 && !game && trump && <p>Current Trump : {trump}</p>}

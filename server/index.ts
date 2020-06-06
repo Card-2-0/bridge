@@ -13,7 +13,8 @@ import {
   updateRound,
   winner,
   getTurn,
-  getRound
+  getRound,
+  getRoundSuit
 } from "./game";
 import { user } from "./setting";
 let acusers = 0;
@@ -70,7 +71,8 @@ io.on("connect", async (socket) => {
   });
   socket.on("round", (room: string, id: number, val: string, suit: string) => {
     let nxtturn = updateRound(room, id, val, suit);
-    io.to(room).emit("roundStatus", getRound(room))
+    let round = getRound(room)
+    io.to(room).emit("roundStatus", round, round.length === 4 ? "any":getRoundSuit(room))
     if (nxtturn === -1) {
       const result = winner(room);
       io.to(room).emit("roundDone", result);

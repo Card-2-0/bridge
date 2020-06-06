@@ -24,7 +24,7 @@ export const addUser = (username: string, roomname: string, sid: string) => {
       tchoose: 0,
       round: [],
       scores: [0,0],
-      suitofround: ""
+      suitofround: "any"
     });
     return 1;
   } else rooms[tmp].users.push(newuser);
@@ -103,6 +103,11 @@ export const getTurn = (roomname: string) => {
 export const getRound = (roomname: string) => {
   tmp = rooms.findIndex((r) => r.name === roomname);
   return rooms[tmp].round;
+};
+
+export const getRoundSuit = (roomname: string) => {
+  tmp = rooms.findIndex((r) => r.name === roomname);
+  return rooms[tmp].suitofround;
 };
 
 export const updateRound = (

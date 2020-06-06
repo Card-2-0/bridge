@@ -1,8 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-export const UserCards = ({ cards, game, handleDispatch }: any) => {
+export const UserCards = ({ cards, game, handleDispatch, roundSuit }: any) => {
   const [suit, setSuit] = useState<string>("");
   const [val, setVal] = useState<string>("");
+  const [anyCard, setAnyCard] = useState(true)
+
+  useEffect(() => {
+    if(roundSuit === "any") setAnyCard(true)
+    else if(cards.findIndex((card:any) => card.suit === roundSuit) === -1) setAnyCard(true)
+    else setAnyCard(false)
+  })
 
   return (
     <div className="playingCards fourColours rotateHand">
@@ -17,7 +24,7 @@ export const UserCards = ({ cards, game, handleDispatch }: any) => {
               <a className={`card rank-${lowerValue} ${suitLower}`}>
                 <span className="rank">{card.value}</span>
                 <span className="suit">&diams;</span>
-                {game && (
+                {game && (anyCard || (card.suit === roundSuit)) && (
                   <input
                     type="radio"
                     name="c-10C"
