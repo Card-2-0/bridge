@@ -20,7 +20,8 @@ export type room = {
   tchoose: number;
   round: any[];
   scores: number[];
-  suitofround: string
+  suitofround: string,
+  preStart: number
 };
 
 export const values = [

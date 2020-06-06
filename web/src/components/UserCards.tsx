@@ -1,4 +1,8 @@
 import React, { useState, useEffect } from "react";
+const diams = <span className="suit">&diams;</span>;
+const hearts = <span className="suit">&hearts;</span>;
+const clubs = <span className="suit">&clubs;</span>;
+const spades = <span className="suit">&spades;</span>;
 
 export const UserCards = ({ cards, game, handleDispatch, roundSuit }: any) => {
   const [suit, setSuit] = useState<string>("");
@@ -23,7 +27,10 @@ export const UserCards = ({ cards, game, handleDispatch, roundSuit }: any) => {
             <li key={i} value={`${card.suit} ${card.value}`}>
               <a className={`card rank-${lowerValue} ${suitLower}`}>
                 <span className="rank">{card.value}</span>
-                <span className="suit">&diams;</span>
+                {suitLower === "hearts" && hearts}
+                {suitLower === "clubs" && clubs}
+                {suitLower === "spades" && spades} 
+                {suitLower === "diams" && diams}
                 {game && (anyCard || (card.suit === roundSuit)) && (
                   <input
                     type="radio"
@@ -41,7 +48,7 @@ export const UserCards = ({ cards, game, handleDispatch, roundSuit }: any) => {
           );
         })}
         <button
-          onClick={() => handleDispatch(val, suit)}
+          onClick={() => { handleDispatch(val, suit); setSuit(""); setVal("");}}
           disabled={!val && !suit}
         >
           Dispatch Card

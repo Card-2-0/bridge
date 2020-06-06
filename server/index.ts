@@ -41,7 +41,7 @@ io.on("connect", async (socket) => {
       let users: user[] = startGame(room);
       for (let i = 0; i < 4; ++i)
         io.to(users[i].id).emit("cards", users[i].cards, i, users);
-      io.to(room).emit("trumpTurn", 0, "", "0");
+      io.to(room).emit("trumpTurn", getTurn(room), "", "0");
     }
   });
 
@@ -87,6 +87,9 @@ io.on("connect", async (socket) => {
       io.to(room).emit("roundTurn", nxtturn, getRound(room));
     }
   });
+  socket.on("gameDone", () => {
+
+  })
   socket.on("disconnect", () => {
     let tmp = socketroom[socket.id]
     delete socketroom[socket.id]

@@ -6,6 +6,12 @@ import { UserCards } from "./UserCards";
 import { Game } from "./Game";
 import { TargetChoose } from "./TargetChoose";
 import { UserLeft } from "./UserLeft";
+import { CardsOnTable } from "./CardsOnTable";
+
+const calcScore = (tar:number,sco:number) => {
+  if(sco < tar) return (10*(tar-sco))
+  else return (10*tar + sco-tar)
+}
 
 const ENDPOINT = "http://localhost:8080/";
 let socket: any;
@@ -30,6 +36,9 @@ export const Messages = () => {
   const [Roundmessage, setRoundMessage] = useState("")
   const [roundSuit, setRoundSuit] = useState("any")
   const [userLeft, setUserLeft] = useState(false)
+  const [score, setScore] = useState([0,0])
+  const [totScore, setTotScore] = useState([0,0])
+  const [noOfGames, setNoOfGames] = useState(0)
   
   useEffect(() => {
     socket = io(ENDPOINT);
@@ -81,6 +90,8 @@ export const Messages = () => {
     })
     socket.on("roundDone", (result: any) => {
       setRoundMessage(`Player ${result+1} won the round`)
+      if(result%2 === 1) setScore([score[0], score[1]+1])
+      else setScore([score[0]+1, score[1]])
     });
     socket.on("roundStatus", (round:any, suitofround:string) => {
       setRoundSuit(suitofround)
@@ -96,8 +107,17 @@ export const Messages = () => {
       setUsersInfo(null)
       setId(-1)
       setUserLeft(true)
+      setCardsOnRound([])
       socket.disconnect()
     })
+    if(score[0]+score[1] === 13){
+      socket.emit('gameDone')
+      setTotScore([totScore[0]+calcScore(target[0],score[0]), 
+                   totScore[1]+calcScore(target[1],score[1])])
+      setNoOfGames(noOfGames+1)
+      setCards([])
+      setCardsOnRound([])
+    }
   });
 
   const onTrump = (trumpSuit: string, trumpValue: string, pass: boolean) => {
@@ -131,26 +151,24 @@ export const Messages = () => {
             Team 2 : {usersinfo[1].name} (Player 2) and {usersinfo[3].name}{" "}
             (Player 4)
           </p>
+          <p>Number of Games done : {noOfGames}</p>
+          <p>Total Scores : Team1: {totScore[0]}, Team2: {totScore[1]}</p>
         </div>
-      )}
-      {cards.length >= 1 && (
-        <UserCards cards={cards} game={roundTurn} handleDispatch={handleDispatch} roundSuit={roundSuit} />
       )}
       {trumpChoose && <Trump num={num} handleSubmit={onTrump} trump={trump} />}
       {targetChoose === -1 && !game && trump && <p>Current Trump : {trump}</p>}
-      {trumpPlayer !== -1 && <p>Trump Placed By {trumpPlayer}</p>}
+      {!game && trumpPlayer !== -1 && <p>Trump Placed By {trumpPlayer}</p>}
       {targetChoose !== -1 && (
         <TargetChoose handleSubmit={onChoose} op={targetChoose} trump={trump} />
       )}
-      {game && <Game trump={trump} target={target} />}
-      {cardsOnRound && 
-      <div>
-        <ol>
-          {cardsOnRound.map((card,i) => <li key={i}>{card.suit}, {card.value} from {card.id+1}</li>)}
-        </ol>
-      </div>}
+      {game && <Game trump={trump} target={target} score={score} />}
+      {cardsOnRound.length>0 && <CardsOnTable cards = {cardsOnRound} users={usersinfo} />}
       {cardsOnRound.length === 4 && <p>{Roundmessage}</p>}
       {userLeft && <UserLeft />}
+      {cards.length >= 1 && (
+        <UserCards cards={cards} game={roundTurn} handleDispatch={handleDispatch} roundSuit={roundSuit} />
+      )}
     </div>
   );
 };
+

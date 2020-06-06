@@ -18,13 +18,14 @@ export const addUser = (username: string, roomname: string, sid: string) => {
       name: roomname,
       users: [newuser],
       trump: "",
-      turn: -1,
+      turn: 0,
       passes: 0,
       target: [-1, -1],
       tchoose: 0,
       round: [],
       scores: [0,0],
-      suitofround: "any"
+      suitofround: "any",
+      preStart:0
     });
     return 1;
   } else rooms[tmp].users.push(newuser);
@@ -151,12 +152,6 @@ export const winner = (room: string) => {
   }
   rooms[tmp].round = [];
   rooms[tmp].scores[higgest.id % 2] += 1
-  if (higgest.id % 2) {
-    console.log("TEAM 1")
-  } else {
-    console.log("TEAM 2")
-  }
-  console.log(rooms[tmp].scores)
   rooms[tmp].round = []
   rooms[tmp].turn = higgest.id
   return(higgest.id)
