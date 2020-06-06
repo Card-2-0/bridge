@@ -58,7 +58,7 @@ io.on("connect", async (socket) => {
       let nxtturn = trumpPlay(trumpvalue, trumpsuit, pass, room);
       if (nxtturn === -1) {
         let tar = getTarget(room);
-        io.to(room).emit("trumpDone", getTrump(room), tar);
+        io.to(room).emit("trumpDone", getTrump(room), tar, getTurn(room));
         if (tar[0] === 0) io.to(room).emit("targetChoose", 0);
         else io.to(room).emit("targetChoose", 1);
         return;

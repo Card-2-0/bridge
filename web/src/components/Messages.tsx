@@ -59,8 +59,9 @@ export const Messages = () => {
         if (pid !== undefined) setTrumpPlayer(parseInt(pid) + 1);
       }
     );
-    socket.on("trumpDone", (finalTrump: string, targets: number[]) => {
+    socket.on("trumpDone", (finalTrump: string, targets: number[], pid:number) => {
       setTrump(finalTrump);
+      setTrumpPlayer(pid+1)
       setTrumpChoose(false);
       setTarget(targets);
     });
