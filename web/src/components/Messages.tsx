@@ -7,11 +7,12 @@ import { Game } from "./Game";
 import { TargetChoose } from "./TargetChoose";
 import { UserLeft } from "./UserLeft";
 import { CardsOnTable } from "./CardsOnTable";
+import { Winner } from "./Winner";
 
-const calcScore = (tar:number,sco:number) => {
-  if(sco < tar) return (10*(tar-sco))
-  else return (10*tar + sco-tar)
-}
+const calcScore = (tar: number, sco: number) => {
+  if (sco < tar) return 10 * (tar - sco);
+  else return 10 * tar + sco - tar;
+};
 
 const ENDPOINT = "http://localhost:8080/";
 let socket: any;
@@ -23,7 +24,7 @@ export const Messages = () => {
   const [room, setRoom] = useState("");
   const [usersinfo, setUsersInfo] = useState(tmp);
   const [id, setId] = useState(-1);
-  const [cards, setCards] = useState<{suit:string,value:string}[]>([]);
+  const [cards, setCards] = useState<{ suit: string; value: string }[]>([]);
   const [trumpChoose, setTrumpChoose] = useState(false);
   const [trump, setTrump] = useState("");
   const [num, setNum] = useState(0);
@@ -31,15 +32,15 @@ export const Messages = () => {
   const [target, setTarget] = useState([-1, -1]);
   const [targetChoose, setTargetChoose] = useState(-1);
   const [trumpPlayer, setTrumpPlayer] = useState(-1);
-  const [roundTurn, setRoundTurn] = useState(false)
-  const [cardsOnRound, setCardsOnRound] = useState<any[]>([])
-  const [Roundmessage, setRoundMessage] = useState("")
-  const [roundSuit, setRoundSuit] = useState("any")
-  const [userLeft, setUserLeft] = useState(false)
-  const [score, setScore] = useState([0,0])
-  const [totScore, setTotScore] = useState([0,0])
-  const [noOfGames, setNoOfGames] = useState(0)
-  
+  const [roundTurn, setRoundTurn] = useState(false);
+  const [cardsOnRound, setCardsOnRound] = useState<any[]>([]);
+  const [Roundmessage, setRoundMessage] = useState("");
+  const [roundSuit, setRoundSuit] = useState("any");
+  const [userLeft, setUserLeft] = useState(false);
+  const [score, setScore] = useState([0, 0]);
+  const [totScore, setTotScore] = useState([0, 0]);
+  const [noOfGames, setNoOfGames] = useState(0);
+
   useEffect(() => {
     socket = io(ENDPOINT);
     const { name, room }: any = queryString.parse(window.location.search);
@@ -68,12 +69,15 @@ export const Messages = () => {
         if (pid !== undefined) setTrumpPlayer(parseInt(pid) + 1);
       }
     );
-    socket.on("trumpDone", (finalTrump: string, targets: number[], pid:number) => {
-      setTrump(finalTrump);
-      setTrumpPlayer(pid+1)
-      setTrumpChoose(false);
-      setTarget(targets);
-    });
+    socket.on(
+      "trumpDone",
+      (finalTrump: string, targets: number[], pid: number) => {
+        setTrump(finalTrump);
+        setTrumpPlayer(pid + 1);
+        setTrumpChoose(false);
+        setTarget(targets);
+      }
+    );
     socket.on("targetChoose", (t: number) => {
       if (t === id % 2) {
         setTargetChoose(0);
@@ -84,39 +88,41 @@ export const Messages = () => {
       setGame(true);
       setTargetChoose(-1);
     });
-    socket.on("roundTurn", (turn:number) => {
-      if(turn === id) setRoundTurn(true)
-      else setRoundTurn(false)
-    })
-    socket.on("roundDone", (result: any) => {
-      setRoundMessage(`Player ${result+1} won the round`)
-      if(result%2 === 1) setScore([score[0], score[1]+1])
-      else setScore([score[0]+1, score[1]])
+    socket.on("roundTurn", (turn: number) => {
+      if (turn === id) setRoundTurn(true);
+      else setRoundTurn(false);
     });
-    socket.on("roundStatus", (round:any, suitofround:string) => {
-      setRoundSuit(suitofround)
-      setCardsOnRound(round)
-    })
+    socket.on("roundDone", (result: any) => {
+      setRoundMessage(`Player ${result + 1} won the round`);
+      if (result % 2 === 1) setScore([score[0], score[1] + 1]);
+      else setScore([score[0] + 1, score[1]]);
+    });
+    socket.on("roundStatus", (round: any, suitofround: string) => {
+      setRoundSuit(suitofround);
+      setCardsOnRound(round);
+    });
     socket.on("userLeft", () => {
-      setGame(false)
-      setTargetChoose(-1)
-      setTrump("")
-      setTrumpPlayer(-1)
-      setTrumpChoose(false)
-      setCards([])
-      setUsersInfo(null)
-      setId(-1)
-      setUserLeft(true)
-      setCardsOnRound([])
-      socket.disconnect()
-    })
-    if(score[0]+score[1] === 13){
-      socket.emit('gameDone')
-      setTotScore([totScore[0]+calcScore(target[0],score[0]), 
-                   totScore[1]+calcScore(target[1],score[1])])
-      setNoOfGames(noOfGames+1)
-      setCards([])
-      setCardsOnRound([])
+      setGame(false);
+      setTargetChoose(-1);
+      setTrump("");
+      setTrumpPlayer(-1);
+      setTrumpChoose(false);
+      setCards([]);
+      setUsersInfo(null);
+      setId(-1);
+      setUserLeft(true);
+      setCardsOnRound([]);
+      socket.disconnect();
+    });
+    if (score[0] + score[1] === 13) {
+      socket.emit("gameDone");
+      setTotScore([
+        totScore[0] + calcScore(target[0], score[0]),
+        totScore[1] + calcScore(target[1], score[1]),
+      ]);
+      setNoOfGames(noOfGames + 1);
+      setCards([]);
+      setCardsOnRound([]);
     }
   });
 
@@ -152,7 +158,9 @@ export const Messages = () => {
             (Player 4)
           </p>
           <p>Number of Games done : {noOfGames}</p>
-          <p>Total Scores : Team1: {totScore[0]}, Team2: {totScore[1]}</p>
+          <p>
+            Total Scores : Team1: {totScore[0]}, Team2: {totScore[1]}
+          </p>
         </div>
       )}
       {trumpChoose && <Trump num={num} handleSubmit={onTrump} trump={trump} />}
@@ -162,13 +170,22 @@ export const Messages = () => {
         <TargetChoose handleSubmit={onChoose} op={targetChoose} trump={trump} />
       )}
       {game && <Game trump={trump} target={target} score={score} />}
-      {cardsOnRound.length>0 && <CardsOnTable cards = {cardsOnRound} users={usersinfo} />}
+      {cardsOnRound.length > 0 && (
+        <CardsOnTable cards={cardsOnRound} users={usersinfo} />
+      )}
+      {cardsOnRound.length === 4 && (
+        <Winner cards={cardsOnRound} trump={trump} />
+      )}
       {cardsOnRound.length === 4 && <p>{Roundmessage}</p>}
       {userLeft && <UserLeft />}
       {cards.length >= 1 && (
-        <UserCards cards={cards} game={roundTurn} handleDispatch={handleDispatch} roundSuit={roundSuit} />
+        <UserCards
+          cards={cards}
+          game={roundTurn}
+          handleDispatch={handleDispatch}
+          roundSuit={roundSuit}
+        />
       )}
     </div>
   );
 };
-
