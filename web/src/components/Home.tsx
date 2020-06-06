@@ -45,9 +45,6 @@ export const Home = () => {
   const spades = <span className="suit">&spades;</span>;
   const deck = Array(10);
   deck.fill(1, 1);
-  //   const handleClick = (hand: Card[] , i: any) => {
-  //     hand = hand.splice(i, 1);
-  //   }
   return (
     <div className="playingCards fourColours faceImages simpleCards inText rotateHand">
       <br />
@@ -66,7 +63,7 @@ export const Home = () => {
               <li
                 key={i}
                 onClick={() => {
-                  var array = [...Hand1]; // make a separate copy of the array
+                  var array = [...Hand1]; 
                   var index = i;
                   if (index !== -1) {
                     array.splice(index, 1);
@@ -92,7 +89,7 @@ export const Home = () => {
             <li
               key={i}
               onClick={() => {
-                var array = [...Hand2]; // make a separate copy of the array
+                var array = [...Hand2];
                 var index = i;
                 if (index !== -1) {
                   array.splice(index, 1);
@@ -118,7 +115,7 @@ export const Home = () => {
             <li
               key={i}
               onClick={() => {
-                var array = [...Hand3]; // make a separate copy of the array
+                var array = [...Hand3];
                 var index = i;
                 if (index !== -1) {
                   array.splice(index, 1);
@@ -144,7 +141,7 @@ export const Home = () => {
             <li
               key={i}
               onClick={() => {
-                var array = [...Hand4]; // make a separate copy of the array
+                var array = [...Hand4]; 
                 var index = i;
                 if (index !== -1) {
                   array.splice(index, 1);

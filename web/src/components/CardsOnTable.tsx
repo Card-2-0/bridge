@@ -17,7 +17,6 @@ export const CardsOnTable = ({cards, users}:any) => {
                 if(card.value === '11') card.value = 'J'
                 const lowerValue = card.value.toLowerCase();
                 const suitLower = card.suit.toLowerCase();
-                // console.log(suitLower);
                 return (
                     <li key={i} value={`${card.suit} ${card.value}`}>
                     <a className={`card rank-${lowerValue} ${suitLower}`}>

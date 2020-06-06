@@ -15,7 +15,6 @@ const calcScore = (tar: number, sco: number) => {
   else return ((10*tar) + (sco - tar));
 };
 
-// const ENDPOINT = "http://localhost:8080/";
 const ENDPOINT = "https://still-beyond-54734.herokuapp.com/"
 let socket: any;
 let tmp: any = null;

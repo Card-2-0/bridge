@@ -22,7 +22,6 @@ export const UserCards = ({ cards, game, handleDispatch, roundSuit }: any) => {
         {cards.map((card: any, i: any) => {
           const lowerValue = card.value.toLowerCase();
           const suitLower = card.suit.toLowerCase();
-          // console.log(suitLower);
           return (
             <li key={i} value={`${card.suit} ${card.value}`}>
               <a className={`card rank-${lowerValue} ${suitLower}`}>

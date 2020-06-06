@@ -7,13 +7,11 @@ import { Home } from "../components/Home";
 
 export const AppRoutes = () => {
   return (
-    // <div>
     <BrowserRouter>
       <Route path="/" exact={true} component={Login}></Route>
       <Route path="/game" exact component={Messages}></Route>
       <Route path="/left" exact component={UserLeft}></Route>
       <Route path="/home" exact component={Home} />
     </BrowserRouter>
-    // </div>
   );
 };
