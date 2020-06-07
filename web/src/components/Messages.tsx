@@ -15,7 +15,8 @@ const calcScore = (tar: number, sco: number) => {
   else return ((10*tar) + (sco - tar));
 };
 
-const ENDPOINT = "https://still-beyond-54734.herokuapp.com/"
+const ENDPOINT = "http://localhost:8080/"
+// const ENDPOINT = "https://still-beyond-54734.herokuapp.com/"
 let socket: any;
 let tmp: any = null;
 const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
@@ -40,6 +41,7 @@ export const Messages = () => {
   const [score, setScore] = useState([0, 0]);
   const [totScore, setTotScore] = useState([0, 0]);
   const [noOfGames, setNoOfGames] = useState(0);
+  const [gameDone, setGameDone] = useState(false);
 
   useEffect(() => {
     socket = io(ENDPOINT);
@@ -115,12 +117,23 @@ export const Messages = () => {
         totScore[0] + calcScore(target[0], score[0]),
         totScore[1] + calcScore(target[1], score[1]),
       ]);
+      setGameDone(true)
       setCardsOnRound([]);
-      setScore([0,0])
       setNoOfGames(noOfGames + 1);
-      setTarget([0,0])
       setCards([]);
     });
+    socket.on("restart", () => {
+      setTarget([0,0])
+      setScore([0,0])
+      setTrumpChoose(false)
+      setTrump("")
+      setNum(0)
+      setGame(false)
+      setRoundTurn(false)
+      setRoundSuit("any")
+      setTrumpPlayer(-1)
+      setTargetChoose(-1)
+    })
   });
 
   const onTrump = (trumpSuit: string, trumpValue: string, pass: boolean) => {
@@ -144,6 +157,11 @@ export const Messages = () => {
     if(winner === id) socket.emit("roundDone" , room, winner)
     if (winner % 2 === 1) setScore([score[0], score[1] + 1]);
     else setScore([score[0] + 1, score[1]]);
+  }
+
+  const RestartGame = () => {
+    socket.emit("restartGame", room)
+    setGameDone(false)
   }
 
   return (
@@ -189,6 +207,7 @@ export const Messages = () => {
           roundSuit={roundSuit}
         />
       )}
+      {gameDone && <button onClick={RestartGame}>Restart Game</button>}
     </div>
   );
 };

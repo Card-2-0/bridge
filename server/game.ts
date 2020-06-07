@@ -25,7 +25,8 @@ export const addUser = (username: string, roomname: string, sid: string) => {
       round: [],
       suitofround: "any",
       preStart:0,
-      roundsDone:0
+      roundsDone:0,
+      restart:0
     });
     return 1;
   } else rooms[tmp].users.push(newuser);
@@ -35,12 +36,13 @@ export const addUser = (username: string, roomname: string, sid: string) => {
 export const startGame = (roomname: string) => {
   tmp = rooms.findIndex((r) => r.name === roomname);
   let allcards = shuffleCards();
+  for(let i=0; i<4; ++i) rooms[tmp].users[i].cards=[]
   for (let i = 0; i < 52; ++i)
     rooms[tmp].users[i % 4].cards.push({
       suit: suits[Math.floor(allcards[i] / 13)],
       value: values[allcards[i] % 13],
     });
-  rooms[tmp].turn = 0;
+  rooms[tmp].turn = rooms[tmp].preStart;
   return rooms[tmp].users;
 };
 
@@ -74,6 +76,7 @@ export const setTarget = (id: number, tar: number, roomname: string) => {
   rooms[tmp].target[id % 2] += tar;
   rooms[tmp].tchoose += 1;
   if (rooms[tmp].tchoose === 2) {
+    rooms[tmp].tchoose = 0
     if (rooms[tmp].target[id % 2] === 0) rooms[tmp].target[id % 2] = 1;
     if (rooms[tmp].target[id % 2] > 13) rooms[tmp].target[id % 2] = 13;
     return 1;
@@ -160,7 +163,10 @@ export const resetRoom = (name:string, winner:number) => {
   rooms[tmp].turn = winner
   rooms[tmp].round = []
   rooms[tmp].roundsDone += 1
-  if(rooms[tmp].roundsDone === 13) return true
+  if(rooms[tmp].roundsDone === 1) {
+    rooms[tmp].roundsDone = 0
+    return true
+  }
   else return false
 }
 
@@ -169,4 +175,15 @@ export const removeRoom = (name:string) => {
   // console.log(tmp, name)
   if(tmp !== -1)
   rooms.splice(tmp,1)
+}
+
+export const RestartGame = (name:string) => {
+  tmp = rooms.findIndex((item) => {return item.name === name})
+  rooms[tmp].restart += 1
+  if(rooms[tmp].restart === 4) {
+    rooms[tmp].restart = 0
+    rooms[tmp].preStart = (1+rooms[tmp].preStart)%4
+    return true
+  }
+  else return false
 }
