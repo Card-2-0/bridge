@@ -16,6 +16,7 @@ import {
   getRoundSuit,
   removeRoom,
   resetRoom,
+  getCardsOfUser,
 } from "./game";
 import { user } from "./setting";
 interface Hash {
@@ -90,13 +91,12 @@ io.on("connect", async (socket) => {
     io.to(room).emit("roundTurn", winner)
     if(res) {
       io.to(room).emit("gameDone")
-      let users: user[] = startGame(room);
-      io.to(room).emit("restart")
-      for (let i = 0; i < 4; ++i)
-        io.to(users[i].id).emit("cards", users[i].cards, i, users);
-      io.to(room).emit("trumpTurn", getTurn(room), "", "0");
     }
   })
+  // socket.on("getCards", (room, id) => {
+  //   socket.emit("cards", getCardsOfUser(room, id))
+  //   socket.emit("trumpTurn", getTurn(room), "", "0");
+  // })
   socket.on("disconnect", () => {
     let tmp = socketroom[socket.id]
     delete socketroom[socket.id]

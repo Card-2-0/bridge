@@ -26,7 +26,6 @@ export const addUser = (username: string, roomname: string, sid: string) => {
       suitofround: "any",
       preStart:0,
       roundsDone:0,
-      restart:0
     });
     return 1;
   } else rooms[tmp].users.push(newuser);
@@ -166,6 +165,7 @@ export const resetRoom = (name:string, winner:number) => {
   if(rooms[tmp].roundsDone === 13) {
     rooms[tmp].roundsDone = 0
     rooms[tmp].preStart = (1+rooms[tmp].preStart)%4
+    rooms[tmp].users = []
     return true
   }
   else return false
@@ -176,4 +176,9 @@ export const removeRoom = (name:string) => {
   // console.log(tmp, name)
   if(tmp !== -1)
   rooms.splice(tmp,1)
+}
+
+export const  getCardsOfUser = (name:string, id:number) => {
+  tmp = rooms.findIndex((item) => {return item.name === name})
+  return rooms[tmp].users[id].cards
 }

@@ -11,7 +11,6 @@ import { CardsOnTable } from "./CardsOnTable";
 import { Winner } from "./Winner";
 
 const calcScore = (tar: number, sco: number) => {
-  console.log(tar,sco)
   if (sco < tar) return (10*(sco-tar));
   else return ((10*tar) + (sco - tar));
 };
@@ -57,10 +56,10 @@ export const Messages = () => {
   }, [ENDPOINT]);
 
   useEffect(() => {
-    socket.on("cards", (dcards: any, id: number, roomusers: any) => {
+    socket.on("cards", (dcards: any, id: number|undefined, roomusers: any) => {
       setCards(dcards);
-      setId(id);
-      setUsersInfo(roomusers);
+      if(id !== undefined) setId(id);
+      if(roomusers) setUsersInfo(roomusers);
     });
     socket.on(
       "trumpTurn",
@@ -120,19 +119,9 @@ export const Messages = () => {
       ]);
       setGameDone(true)
       setCardsOnRound([]);
+      setCards([])
       setNoOfGames(noOfGames + 1);
-      setCards([]);
     });
-    socket.on("restart", () => {
-      setTrumpChoose(false)
-      setTrump("")
-      setNum(0)
-      setGame(false)
-      setRoundTurn(false)
-      setRoundSuit("any")
-      setTrumpPlayer(-1)
-      setTargetChoose(-1)
-    })
   });
 
   const onTrump = (trumpSuit: string, trumpValue: string, pass: boolean) => {
@@ -162,6 +151,20 @@ export const Messages = () => {
     setGameDone(false)
     setTarget([0,0])
     setScore([0,0])
+    setTrumpChoose(false)
+    setTrump("")
+    setNum(0)
+    setGame(false)
+    setRoundTurn(false)
+    setRoundSuit("any")
+    setTrumpPlayer(-1)
+    setTargetChoose(-1)
+    console.log("close Modal")
+    socket.emit("join", name, room, (error: any) => {
+      console.log(error);
+      alert(error);
+      window.location.pathname = "/";
+    });
   }
 
   return (
@@ -209,6 +212,7 @@ export const Messages = () => {
       )}
       <Modal 
         isOpen={gameDone}
+        ariaHideApp={false}
       >
         <h3>Results of Game:</h3>
         <h5>Targets for teams :</h5>
@@ -217,7 +221,7 @@ export const Messages = () => {
         <p>Team 1 : {score[0]} , Team 2 : {score[1]}</p>
         <h5>Total Scores</h5>
         <p>Team 1 : {totScore[0]} , Team 2 : {totScore[1]}</p>
-        <button onClick={closeModal}>Close</button>
+        <button onClick={(e) => {console.log(cards); closeModal();}}>Close</button>
       </Modal>
     </div>
   );
