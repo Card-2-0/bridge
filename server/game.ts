@@ -163,8 +163,9 @@ export const resetRoom = (name:string, winner:number) => {
   rooms[tmp].turn = winner
   rooms[tmp].round = []
   rooms[tmp].roundsDone += 1
-  if(rooms[tmp].roundsDone === 1) {
+  if(rooms[tmp].roundsDone === 13) {
     rooms[tmp].roundsDone = 0
+    rooms[tmp].preStart = (1+rooms[tmp].preStart)%4
     return true
   }
   else return false
@@ -175,15 +176,4 @@ export const removeRoom = (name:string) => {
   // console.log(tmp, name)
   if(tmp !== -1)
   rooms.splice(tmp,1)
-}
-
-export const RestartGame = (name:string) => {
-  tmp = rooms.findIndex((item) => {return item.name === name})
-  rooms[tmp].restart += 1
-  if(rooms[tmp].restart === 4) {
-    rooms[tmp].restart = 0
-    rooms[tmp].preStart = (1+rooms[tmp].preStart)%4
-    return true
-  }
-  else return false
 }

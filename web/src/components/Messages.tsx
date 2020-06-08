@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Modal from "react-modal"
 import queryString from "query-string";
 import io from "socket.io-client";
 import { Trump } from "./Trump";
@@ -123,8 +124,6 @@ export const Messages = () => {
       setCards([]);
     });
     socket.on("restart", () => {
-      setTarget([0,0])
-      setScore([0,0])
       setTrumpChoose(false)
       setTrump("")
       setNum(0)
@@ -159,9 +158,10 @@ export const Messages = () => {
     else setScore([score[0] + 1, score[1]]);
   }
 
-  const RestartGame = () => {
-    socket.emit("restartGame", room)
+  const closeModal = () => {
     setGameDone(false)
+    setTarget([0,0])
+    setScore([0,0])
   }
 
   return (
@@ -207,7 +207,18 @@ export const Messages = () => {
           roundSuit={roundSuit}
         />
       )}
-      {gameDone && <button onClick={RestartGame}>Restart Game</button>}
+      <Modal 
+        isOpen={gameDone}
+      >
+        <h3>Results of Game:</h3>
+        <h5>Targets for teams :</h5>
+        <p>Team 1 : {target[0]} , Team 2 : {target[1]}</p>
+        <h5>Scores of Teams :</h5>
+        <p>Team 1 : {score[0]} , Team 2 : {score[1]}</p>
+        <h5>Total Scores</h5>
+        <p>Team 1 : {totScore[0]} , Team 2 : {totScore[1]}</p>
+        <button onClick={closeModal}>Close</button>
+      </Modal>
     </div>
   );
 };
