@@ -8,7 +8,7 @@ const calculateVal = (val: string) => {
   else return val;
 };
 
-export const Winner = ({ cards, trump, call }: any) => {
+export const Winner = ({ cards, trump, call,check }: any) => {
   const [higgest, setHiggest] = useState<any>("")
 
   useEffect(() => {
@@ -29,7 +29,7 @@ export const Winner = ({ cards, trump, call }: any) => {
         highest = suitPlays[0];
       }
       setHiggest(highest.id)
-      call(highest.id)
+      if(!check) call(highest.id)
     }
     else setHiggest("")
   }, [cards])

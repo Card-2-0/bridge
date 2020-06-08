@@ -42,6 +42,8 @@ export const Messages = () => {
   const [totScore, setTotScore] = useState([0, 0]);
   const [noOfGames, setNoOfGames] = useState(0);
   const [gameDone, setGameDone] = useState(false);
+  const [allCards, setAllCards] = useState<any[]>([])
+  const [trumpMessages, setTrumpMessages] = useState<string[]>([])
 
   useEffect(() => {
     socket = io(ENDPOINT);
@@ -57,7 +59,9 @@ export const Messages = () => {
 
   useEffect(() => {
     socket.on("cards", (dcards: any, id: number|undefined, roomusers: any) => {
-      setCards(dcards);
+      setCards(dcards.slice(0,13))
+      setAllCards(dcards.slice(13));
+      console.log(dcards.length)
       if(id !== undefined) setId(id);
       if(roomusers) setUsersInfo(roomusers);
     });
@@ -112,16 +116,13 @@ export const Messages = () => {
       setCardsOnRound([]);
       socket.disconnect();
     });
-    socket.on("gameDone", () => {
+    if(score[0]+score[1] === 1 && !gameDone) {
       setTotScore([
         totScore[0] + calcScore(target[0], score[0]),
         totScore[1] + calcScore(target[1], score[1]),
       ]);
       setGameDone(true)
-      setCardsOnRound([]);
-      setCards([])
-      setNoOfGames(noOfGames + 1);
-    });
+    };
   });
 
   const onTrump = (trumpSuit: string, trumpValue: string, pass: boolean) => {
@@ -148,23 +149,22 @@ export const Messages = () => {
   }
 
   const closeModal = () => {
+    setNoOfGames(noOfGames + 1);
+    setCardsOnRound([]);
     setGameDone(false)
     setTarget([0,0])
     setScore([0,0])
-    setTrumpChoose(false)
     setTrump("")
-    setNum(0)
+    setNum(1)
     setGame(false)
     setRoundTurn(false)
     setRoundSuit("any")
     setTrumpPlayer(-1)
     setTargetChoose(-1)
+    setCards(allCards.splice(0,13))
     console.log("close Modal")
-    socket.emit("join", name, room, (error: any) => {
-      console.log(error);
-      alert(error);
-      window.location.pathname = "/";
-    });
+    if(id === (noOfGames+1)%4) setTrumpChoose(true)
+    else setTrumpChoose(false)
   }
 
   return (
@@ -199,7 +199,7 @@ export const Messages = () => {
         <CardsOnTable cards={cardsOnRound} users={usersinfo} />
       )}
       {cardsOnRound.length === 4 && (
-        <Winner cards={cardsOnRound} trump={trump} call={WinnerHandle}/>
+        <Winner cards={cardsOnRound} trump={trump} call={WinnerHandle} check={gameDone}/>
       )}
       {userLeft && <UserLeft />}
       {cards.length >= 1 && (

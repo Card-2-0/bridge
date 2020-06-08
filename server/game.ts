@@ -24,8 +24,8 @@ export const addUser = (username: string, roomname: string, sid: string) => {
       tchoose: 0,
       round: [],
       suitofround: "any",
-      preStart:0,
       roundsDone:0,
+      preStart:0
     });
     return 1;
   } else rooms[tmp].users.push(newuser);
@@ -34,14 +34,16 @@ export const addUser = (username: string, roomname: string, sid: string) => {
 
 export const startGame = (roomname: string) => {
   tmp = rooms.findIndex((r) => r.name === roomname);
-  let allcards = shuffleCards();
   for(let i=0; i<4; ++i) rooms[tmp].users[i].cards=[]
-  for (let i = 0; i < 52; ++i)
+  
+  for(let j = 0; j<8; ++j){
+    let allcards = shuffleCards();
+    for (let i = 0; i < 52; ++i)
     rooms[tmp].users[i % 4].cards.push({
       suit: suits[Math.floor(allcards[i] / 13)],
       value: values[allcards[i] % 13],
     });
-  rooms[tmp].turn = rooms[tmp].preStart;
+  }
   return rooms[tmp].users;
 };
 
@@ -139,36 +141,17 @@ const calculateVal = (val: string) => {
   else return val;
 };
 
-// export const winner = (room: string) => {
-//   tmp = rooms.findIndex((r) => r.name === room);
-//   if (tmp === -1) throw new Error("");
-//   const trumpPlays = rooms[tmp].round.filter((r) => r.suit === rooms[tmp].trump);
-//   const suitPlays = rooms[tmp].round.filter((r) => r.suit === rooms[tmp].suitofround);
-//   let higgest: any;
-//   if (trumpPlays.length !== 0) {
-//     trumpPlays.sort((a, b) => parseInt(b.value) - parseInt(a.value));
-//     higgest = trumpPlays[0];
-//   } else {
-//     suitPlays.sort((a, b) => parseInt(b.value) - parseInt(a.value));
-//     higgest = suitPlays[0];
-//   }
-//   rooms[tmp].round = [];
-//   rooms[tmp].turn = higgest.id
-//   return(higgest.id)
-// };
-
 export const resetRoom = (name:string, winner:number) => {
   tmp = rooms.findIndex((item) => {return item.name === name})
   rooms[tmp].turn = winner
   rooms[tmp].round = []
   rooms[tmp].roundsDone += 1
-  if(rooms[tmp].roundsDone === 13) {
+  if(rooms[tmp].roundsDone === 1) {
     rooms[tmp].roundsDone = 0
-    rooms[tmp].preStart = (1+rooms[tmp].preStart)%4
+    rooms[tmp].preStart = (rooms[tmp].preStart+1)%4
     rooms[tmp].users = []
-    return true
+    rooms[tmp].turn = rooms[tmp].preStart
   }
-  else return false
 }
 
 export const removeRoom = (name:string) => {
@@ -176,9 +159,4 @@ export const removeRoom = (name:string) => {
   // console.log(tmp, name)
   if(tmp !== -1)
   rooms.splice(tmp,1)
-}
-
-export const  getCardsOfUser = (name:string, id:number) => {
-  tmp = rooms.findIndex((item) => {return item.name === name})
-  return rooms[tmp].users[id].cards
 }
