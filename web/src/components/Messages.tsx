@@ -33,6 +33,7 @@ export const Messages = () => {
   const [game, setGame] = useState(false);
   const [target, setTarget] = useState([-1, -1]);
   const [targetChoose, setTargetChoose] = useState(-1);
+  const [trumpTurn, setTrumpTurn] = useState(1) 
   const [trumpPlayer, setTrumpPlayer] = useState(-1);
   const [roundTurn, setRoundTurn] = useState(false);
   const [cardsOnRound, setCardsOnRound] = useState<any[]>([]);
@@ -43,7 +44,7 @@ export const Messages = () => {
   const [noOfGames, setNoOfGames] = useState(0);
   const [gameDone, setGameDone] = useState(false);
   const [allCards, setAllCards] = useState<any[]>([])
-  const [trumpMessages, setTrumpMessages] = useState<string[]>([])
+  const [trumpMessage, setTrumpMessage] = useState<string>("")
 
   useEffect(() => {
     socket = io(ENDPOINT);
@@ -58,10 +59,18 @@ export const Messages = () => {
   }, [ENDPOINT]);
 
   useEffect(() => {
-    socket.on("cards", (dcards: any, id: number|undefined, roomusers: any) => {
+    if(trumpMessage === "") return
+    let msg = document.createElement("p")
+    let x = document.getElementById("historyBox")
+    msg.appendChild(document.createTextNode(trumpMessage))
+    x?.appendChild(msg)
+  }, [trumpMessage])
+
+  useEffect(() => {
+    socket.once("cards", (dcards: any, id: number|undefined, roomusers: any) => {
       setCards(dcards.slice(0,13))
       setAllCards(dcards.slice(13));
-      console.log(dcards.length)
+      console.log("cards")
       if(id !== undefined) setId(id);
       if(roomusers) setUsersInfo(roomusers);
     });
@@ -72,7 +81,12 @@ export const Messages = () => {
         else setTrumpChoose(false);
         setTrump(trumpsuit);
         setNum(parseInt(trumpvalue) + 1);
-        if (pid !== undefined) setTrumpPlayer(parseInt(pid) + 1);
+        if (pid !== undefined) {
+          setTrumpPlayer(parseInt(pid) + 1);
+          setTrumpMessage(`${pid+1} chose ${trumpvalue}, ${trumpsuit}`)
+        }
+        else if (trumpsuit !== "") setTrumpMessage(`${(playerid+3)%4+1} Passed`)
+        setTrumpTurn(playerid+1)
       }
     );
     socket.on(
@@ -82,6 +96,7 @@ export const Messages = () => {
         setTrumpPlayer(pid + 1);
         setTrumpChoose(false);
         setTarget(targets);
+        setTrumpMessage(`Trump Done : ${pid+1} chose ${finalTrump} with ${targets[pid%2]}`)
       }
     );
     socket.on("targetChoose", (t: number) => {
@@ -163,6 +178,9 @@ export const Messages = () => {
     setTargetChoose(-1)
     setCards(allCards.splice(0,13))
     console.log("close Modal")
+    setTrumpTurn((noOfGames+1)%4+1)
+    let x = document.getElementById("historyBox")
+    while(x?.hasChildNodes) x.removeChild(x.children[0])
     if(id === (noOfGames+1)%4) setTrumpChoose(true)
     else setTrumpChoose(false)
   }
@@ -188,7 +206,13 @@ export const Messages = () => {
           </p>
         </div>
       )}
+      { !game &&
+      <div id="historyBox">
+        <h3>Trump History</h3>
+      </div> }
+      {trumpTurn-1===id ? <p>Your Turn</p> : <p>Player {trumpTurn}'s Turn</p>}
       {trumpChoose && <Trump num={num} handleSubmit={onTrump} trump={trump} />}
+      
       {targetChoose === -1 && !game && trump && <p>Current Trump : {trump}</p>}
       {!game && trumpPlayer !== -1 && <p>Trump Placed By {trumpPlayer}</p>}
       {targetChoose !== -1 && (
