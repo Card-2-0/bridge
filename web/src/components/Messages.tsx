@@ -186,24 +186,48 @@ export const Messages = () => {
   }
 
   return (
-    <div>
-      <h1>Hi {name ? name : "There"}</h1>
-      {id != -1 && <p>You are Player no. {id + 1}</p>}
+    <div className="game">
+      <div className="game-header">
+      <h1 className="hithere">Hi {name ? name : "There"}</h1>
+      {id != -1 && <h2 className="playerID">You are Player no. {id + 1}</h2>}
+      <h1 className="room">Room: {room}</h1>
+      </div>
       {usersinfo && (
-        <div>
-          <h4>Teams in Room</h4>
-          <p>
-            Team 1 : {usersinfo[0].name} (Player 1) and {usersinfo[2].name}{" "}
-            (Player 3)
-          </p>
-          <p>
-            Team 2 : {usersinfo[1].name} (Player 2) and {usersinfo[3].name}{" "}
-            (Player 4)
-          </p>
-          <p>Number of Games done : {noOfGames}</p>
-          <p>
-            Total Scores : Team1: {totScore[0]}, Team2: {totScore[1]}
-          </p>
+        <div className="room-details">
+          <div className = "team-details">
+          <div className="teams-heading">
+          <h3>Teams in Room</h3> 
+          </div>
+          <div className="teams">
+            <div className="team1">
+            <p className="team-name">Team 1</p>
+            <p>Player 1 - {usersinfo[0].name}</p>
+            <p>Player 3 - {usersinfo[2].name}</p>
+            </div>
+            <div className="team2">
+            <p className="team-name">Team 2</p>
+            <p>{usersinfo[1].name} - Player 2</p>
+            <p>{usersinfo[3].name} - Player 4</p>
+            </div>
+          </div>
+          </div>
+          <div className="team-details scores">
+            <div className="teams-heading"><h3>Total Scores</h3></div>
+            <div className="teams">
+            <div className="team1">
+            <p className="score-team-name">Team 1</p>
+            <p className="score-score">{totScore[0]}</p>
+            </div>
+            <div className="team2">
+            <p className="score-team-name">Team 2</p>
+            <p className="score-score">{totScore[1]}</p>
+            </div>
+            </div>
+          </div>
+          <div className="noofgames">
+          <div className="noofgames-heading"><h3>Games Played</h3></div>
+          <div className="noofgames-result"><p>{noOfGames}</p></div>
+          </div>
         </div>
       )}
       { !game &&
