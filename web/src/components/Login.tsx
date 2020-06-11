@@ -1,25 +1,47 @@
 import React, { useState } from "react"
 import { Link } from "react-router-dom"
+const img = require("../assets/title.jpg")
 
 export const Login = () => {
     const [name, setName] = useState('')
     const [room, setRoom ] = useState('')
     return (
-        <div>
-            <h1>LOGIN</h1>
+        <div className="login-page">
+        <div className="login">
+            <div className="heading">
+                <img src={img} width="150px"/>
+                <h1 className="title">BRIDGE</h1>
+            </div>
+            <p className="instructions">Instructions : Enter your player name and the room name (if room already exists, you'll be joined in that or new one will be created). Share the room name with your friends and ask them join. Once four players join in a room, the game will start !!</p>
+            <h1 className="login-title">&#10140;  LOGIN</h1>
+            <div className="login-input-section">
+            <i className="fas fa-2x fa-user fas-field"></i>
             <input
+                className="login-input"
                 type = 'text'
                 placeholder = 'Enter Name'
                 value = {name}
                 onChange = { ({target}) => setName(target.value) }  /> 
+            </div>
+            <div className="login-input-section">
+            <i className="fas fa-2x fa-key fas-field"></i>
             <input
+                className="login-input"
                 type = 'text'
                 placeholder = "Enter Room"
                 value = {room}
                 onChange = { ({target}) => setRoom(target.value) } />
-            <Link onClick={(e) => (!name || !room) ? e.preventDefault():null } to={`/game?name=${name}&room=${room}`}>
-                <button type='submit'>Login</button>
+            </div>
+            <div className="login-input-section">
+            <i className="fas fa-2x fa-sign-in-alt fas-submit"></i>
+            <Link 
+                onClick={(e) => (!name || !room) ? e.preventDefault():null } 
+                to={`/game?name=${name}&room=${room}`}
+                className = "login-submit"
+            >Enter Room
             </Link>
+            </div>
+        </div>
         </div>
     )
 }
