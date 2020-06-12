@@ -9,6 +9,7 @@ import { TargetChoose } from "./TargetChoose";
 import { UserLeft } from "./UserLeft";
 import { CardsOnTable } from "./CardsOnTable";
 import { Winner } from "./Winner";
+import { userInfo } from "os";
 
 const calcScore = (tar: number, sco: number) => {
   if (sco < tar) return (10*(sco-tar));
@@ -59,11 +60,31 @@ export const Messages = () => {
   }, [ENDPOINT]);
 
   useEffect(() => {
+    console.log(trumpTurn)
     if(trumpMessage === "") return
-    let msg = document.createElement("p")
-    let x = document.getElementById("historyBox")
-    msg.appendChild(document.createTextNode(trumpMessage))
-    x?.appendChild(msg)
+    let tMessage = trumpMessage.split(" ")
+    let x = document.getElementById("trump-box")
+    if(tMessage.length != 2) {
+      let msgbox = document.createElement("div")
+    msgbox.setAttribute("class", "final-trump-message-box")
+    msgbox.innerHTML = `<p class="trump-message">${trumpMessage}</p>`
+      x?.appendChild(msgbox)
+      return
+    }
+    let msgbox = document.createElement("div")
+    let pno = (trumpTurn+2)%4+1
+    if(pno-1 !== id)
+    msgbox.innerHTML = `
+      <p class="trump-message"><span class="trump-player-name">${tMessage[0]}  </span> ${tMessage[1]}</p> 
+      <p class="trump-player-no">Player ${pno}</p>
+    `
+    else
+    msgbox.innerHTML = `
+      <p class="y-trump-player-no">Your turn</p>
+      <p class="y-trump-message"><span class="y-trump-player-name">${tMessage[0]}  </span> ${tMessage[1]}</p>
+    `
+    msgbox.setAttribute("class", "trump-message-box")
+    x?.appendChild(msgbox)
   }, [trumpMessage])
 
   useEffect(() => {
@@ -81,11 +102,11 @@ export const Messages = () => {
         else setTrumpChoose(false);
         setTrump(trumpsuit);
         setNum(parseInt(trumpvalue) + 1);
-        if (pid !== undefined) {
+        if (pid !== undefined && usersinfo) {
           setTrumpPlayer(parseInt(pid) + 1);
-          setTrumpMessage(`${pid+1} chose ${trumpvalue}, ${trumpsuit}`)
+          setTrumpMessage(`${usersinfo[pid].name} ${trumpvalue},${trumpsuit}`)
         }
-        else if (trumpsuit !== "") setTrumpMessage(`${(playerid+3)%4+1} Passed`)
+        else if (trumpsuit !== "" && usersinfo) setTrumpMessage(`${usersinfo[(playerid+3)%4].name} PASS`)
         setTrumpTurn(playerid+1)
       }
     );
@@ -96,7 +117,9 @@ export const Messages = () => {
         setTrumpPlayer(pid + 1);
         setTrumpChoose(false);
         setTarget(targets);
-        setTrumpMessage(`Trump Done : ${pid+1} chose ${finalTrump} with ${targets[pid%2]}`)
+        setTrumpTurn(0)
+        if(usersinfo)
+        setTrumpMessage(`TRUMP DONE - ${usersinfo[pid].name} chose ${finalTrump} with ${targets[pid%2]}`)
       }
     );
     socket.on("targetChoose", (t: number) => {
@@ -228,13 +251,25 @@ export const Messages = () => {
           <div className="noofgames-heading"><h3>Games Played</h3></div>
           <div className="noofgames-result"><p>{noOfGames}</p></div>
           </div>
+          { !game &&
+            <div id="historyBox" className="history-box">
+              <div className="teams-heading"><h3>Trump History</h3></div>
+              <div id="trump-box" className="trump-box"></div>
+              {trumpTurn !== 0 && (trumpTurn-1===id ? 
+                <div className="teams-heading turn-box-y"><p className="trump-message">Your Turn</p></div> : 
+                <div className="teams-heading turn-box-o"><p className="trump-message">Player {trumpTurn}'s Turn</p></div> )}
+            </div> }
         </div>
       )}
-      { !game &&
-      <div id="historyBox">
-        <h3>Trump History</h3>
-      </div> }
-      {trumpTurn-1===id ? <p>Your Turn</p> : <p>Player {trumpTurn}'s Turn</p>}
+      {/* { !game &&
+      <div id="historyBox" className="history-box">
+        <div className="teams-heading"><h3>Trump History</h3></div>
+        <div id="trump-box" className="trump-box"></div>
+        {trumpTurn !== 0 && (trumpTurn-1===id ? 
+          <div className="teams-heading turn-box-y"><p className="trump-message">Your Turn</p></div> : 
+          <div className="teams-heading turn-box-o"><p className="trump-message">Player {trumpTurn}'s Turn</p></div> )}
+      </div> } */}
+      
       {trumpChoose && <Trump num={num} handleSubmit={onTrump} trump={trump} />}
       
       {targetChoose === -1 && !game && trump && <p>Current Trump : {trump}</p>}

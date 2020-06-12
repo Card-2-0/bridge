@@ -240,6 +240,81 @@ code {
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
 }
+.history-box {
+  min-width: 300px;
+  max-width: 300px;
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.trump-box{
+  display: flex;
+  flex-direction: column;
+  color: black;
+}
+.trump-message-box{
+  padding: 10px;
+  align-items: baseline;
+  display: flex;
+  flex-direction: row;
+  background-color: white;
+  border-bottom: 2px solid rgb(185, 185, 185);
+}
+.trump-message {
+  display: inline;
+  text-align: center;
+  font-weight: 500;
+}
+.trump-player-no {
+  margin-left: auto;
+  font-size: 10px;
+}
+.trump-player-name {
+  color: tomato;
+  font-size: 20px;
+  font-weight: 700;
+}
+.y-trump-message {
+  margin-left: auto;
+  display: inline;
+  font-weight: 500;
+}
+.y-trump-player-no {
+  font-size: 10px;
+}
+.y-trump-player-name {
+  color: green;
+  font-size: 20px;
+  font-weight: 700;
+}
+.final-trump-message-box {
+  padding: 10px;
+  align-items: baseline;
+  display: flex;
+  flex-direction: row;
+  border: 0px;
+  background-color: black;
+  color: white;
+  font-size: 20px;
+  border-bottom-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+.turn-box-y {
+  border-radius: 0px;
+  border-bottom-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+  font-size: 20px;
+  background-color: green;
+}
+.turn-box-o {
+  border-radius: 0px;
+  border-bottom-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+  font-size: 20px;
+  background-color: rgb(201, 2, 2);
+}
+
 .game{
   background-color: rgb(253, 213, 206);
 }
