@@ -71,6 +71,7 @@ export const Messages = () => {
     let tMessage = trumpMessage.split(" ")
     let x = document.getElementById("trump-box")
     if(tMessage.length > 3) {
+      let x = document.getElementById("trump-box1")
       let msgbox = document.createElement("div")
       msgbox.setAttribute("class", "final-trump-message-box")
       msgbox.innerHTML = `<p class="trump-message">${trumpMessage}</p>`
@@ -215,12 +216,14 @@ export const Messages = () => {
   }
 
   return (
-    <div className="game">
+    <div className="full-game">
       <div className="game-header">
       <h1 className="hithere">Hi {name ? name : "There"}</h1>
       {id != -1 && <h2 className="playerID">You are Player no. {id + 1}</h2>}
       <h1 className="room">Room: {room}</h1>
       </div>
+      <div className="game">
+      <div className="game-left">
       {usersinfo && (
         <div className="room-details">
           <div className = "team-details">
@@ -257,32 +260,9 @@ export const Messages = () => {
           <div className="noofgames-heading"><h3>Games Played</h3></div>
           <div className="noofgames-result"><p>{noOfGames}</p></div>
           </div>
-          { !game &&
-            <div id="historyBox" className="history-box">
-              <div className="teams-heading"><h3>Trump History</h3></div>
-              <div id="trump-box" className="trump-box"></div>
-              {trumpTurn !== 0 && (trumpTurn-1===id ? 
-                <div className="teams-heading turn-box-y"><p className="trump-message">Your Turn</p></div> : 
-                <div className="teams-heading turn-box-o"><p className="trump-message">Player {trumpTurn}'s Turn</p></div> )}
-            </div> }
-        </div>
-      )}
-      {/* { !game &&
-      <div id="historyBox" className="history-box">
-        <div className="teams-heading"><h3>Trump History</h3></div>
-        <div id="trump-box" className="trump-box"></div>
-        {trumpTurn !== 0 && (trumpTurn-1===id ? 
-          <div className="teams-heading turn-box-y"><p className="trump-message">Your Turn</p></div> : 
-          <div className="teams-heading turn-box-o"><p className="trump-message">Player {trumpTurn}'s Turn</p></div> )}
-      </div> } */}
+       </div>
+      )}        
       
-      {trumpChoose && <Trump num={num} handleSubmit={onTrump} trump={trump} />}
-      
-      {targetChoose === -1 && !game && trump && <p>Current Trump : {trump}</p>}
-      {!game && trumpPlayer !== -1 && <p>Trump Placed By {trumpPlayer}</p>}
-      {targetChoose !== -1 && (
-        <TargetChoose handleSubmit={onChoose} op={targetChoose} trump={trump} />
-      )}
       {game && <Game trump={trump} target={target} score={score} />}
       {cardsOnRound.length > 0 && (
         <CardsOnTable cards={cardsOnRound} users={usersinfo} />
@@ -299,6 +279,30 @@ export const Messages = () => {
           roundSuit={roundSuit}
         />
       )}
+      </div>
+
+      <div className="trump-section">
+        { !game &&
+              <div id="historyBox" className="history-box">
+                <div className="teams-heading"><h3>Trump History</h3></div>
+                <div id="trump-box" className="trump-box"></div>
+                <div id="trump-box1" className="trump-box"></div>
+                {trumpTurn !== 0 && (trumpTurn-1===id ? 
+                  <div className="teams-heading turn-box-y"><p className="trump-message">Your Turn</p></div> : 
+                  <div className="teams-heading turn-box-o"><p className="trump-message">Player {trumpTurn}'s Turn</p></div> )}
+              </div> }
+          {targetChoose === -1 && !game && trump && 
+            <div className="current-trump">
+              <p className="current-trump-suit">Current Trump : {trump}</p>
+              <p className="current-trump-player">Trump Placed By Player {trumpPlayer}</p>
+            </div>
+          }
+          {targetChoose !== -1 && (
+            <TargetChoose handleSubmit={onChoose} op={targetChoose} trump={trump} />
+          )}
+          {trumpChoose && <Trump num={num} handleSubmit={onTrump} trump={trump} />}
+        </div>
+      </div>
       <Modal 
         isOpen={gameDone}
         ariaHideApp={false}
@@ -312,6 +316,7 @@ export const Messages = () => {
         <p>Team 1 : {totScore[0]} , Team 2 : {totScore[1]}</p>
         <button onClick={(e) => {console.log(cards); closeModal();}}>Close</button>
       </Modal>
+      
     </div>
   );
 };

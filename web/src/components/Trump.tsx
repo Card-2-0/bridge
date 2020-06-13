@@ -1,4 +1,9 @@
 import React, { useState } from "react";
+const suitSymbol = new Map()
+suitSymbol.set("SPADES","&spades;")
+suitSymbol.set("DIAMS","&diams;")
+suitSymbol.set("CLUBS","&clubs;")
+suitSymbol.set("HEARTS","&hearts;")
 
 export const Trump = ({num, handleSubmit}:any) => {
   const [trumpSuit, setTrumpSuit] = useState("SPADES");
@@ -8,21 +13,21 @@ export const Trump = ({num, handleSubmit}:any) => {
     arr.push(i.toString());
   }
   return (
-    <div>
-      <p>Trump</p>
-      <select name="suit" onChange={(e) => setTrumpSuit(e.target.value)}>
-        <option value="SPADES">SPADES</option>
-        <option value="CLUBS">CLUBS</option>
-        <option value="HEARTS">HEARTS</option>
-        <option value="DIAMS">DIAMOND</option>
+    <div className="trump-select">
+      <div className="teams-heading"><h3>Trump</h3></div>
+      <select className="trump-suit-option" name="suit" onChange={(e) => setTrumpSuit(e.target.value)}>
+        <option value="SPADES">SPADES &spades;</option>
+        <option value="CLUBS">CLUBS &clubs;</option>
+        <option value="HEARTS">HEARTS &hearts;</option>
+        <option value="DIAMS">DIAMOND &diams;</option>
       </select>
       <select name="val" onChange={(e) => setTrumpVal(e.target.value)}>
         {arr.map((val) => (
           <option key={val} value={val}>{val}</option>
         ))}
       </select>
-      <button onClick={(e) => {handleSubmit(trumpSuit, trumpValue, true)}}>Confirm Trump</button>
-      <button onClick={(e) => {handleSubmit("",String(num-1),false)}}>Pass</button>
+      <button className = "trump-button trump-confirm" onClick={(e) => {handleSubmit(trumpSuit, trumpValue, true)}}>Confirm Trump</button>
+      <button className = "trump-button trump-pass" onClick={(e) => {handleSubmit("",String(num-1),false)}}>Pass</button>
     </div>
   );
 };

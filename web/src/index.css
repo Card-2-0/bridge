@@ -243,7 +243,6 @@ code {
 .history-box {
   min-width: 300px;
   max-width: 300px;
-  margin-left: auto;
   display: flex;
   flex-direction: column;
 }
@@ -252,6 +251,8 @@ code {
   display: flex;
   flex-direction: column;
   color: black;
+  max-height: 31vh;
+  overflow: auto;
 }
 .trump-message-box{
   padding: 10px;
@@ -319,7 +320,119 @@ code {
   font-weight: 400;
   color: rgb(37, 1, 48);
 }
-
-.game{
+select {
+  padding: 10px;
+  border: 0;
+  text-align: center;
+  align-content: center;
+  font-weight: 800;  
+}
+select:hover {
+  background-color: black;
+  color: white;
+}
+.option {
+  font-size: 20px;
+  font-weight: 800;
+}
+.trump-select {
+  display: flex;
+  flex-direction: column;
+  max-width: 300px;
+  margin-top: auto;
+  min-height: 25vh;
+}
+.trump-button {
+  color: white;
+  background-color: red;
+  border: 0;
+  padding: 10px;
+  font-weight: 1000;
+}
+.trump-confirm{
+  background-color: green;
+}
+.trump-confirm:hover {
+  background-color: rgb(204, 204, 204);
+  color: green;
+}
+.trump-pass {
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+.trump-pass:hover  {
+  background-color: rgb(204, 204, 204);
+  color: red;
+}
+.game {
+  display: flex;
+  flex-direction: row;
+}
+.trump-section {
+  margin: 15px;
+  min-width: 300px;
+  max-width: 300px;
+  height: 86vh;
+  display: flex;
+  flex-direction: column;
+}
+.current-trump {
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+}
+.current-trump-suit {
+  background-color: white;
+  color: black;
+  padding: 10px;
+  font-weight: 800;
+  text-align: center;
+  border-top-right-radius: 10px;
+  border-top-left-radius: 10px;
+}
+.current-trump-player {
+  background-color: black;
+  color: white;
+  padding: 10px;
+  font-weight: 800;
+  text-align: center;
+  border-bottom-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+.target-choose {
+  display: flex;
+  flex-direction: column;
+  margin-top: auto;
+}
+.target-choose-button {
+  background-color: tomato;
+  color: white;
+  border: 0;
+  border-bottom-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+  font-weight: 600;
+  font-size: 18px;
+  padding: 10px;
+}
+.target-choose-button:hover {
+  background-color: rgb(204, 204, 204);
+  color: tomato;
+}
+.target-trump-suit {
+  background-color: rgb(40, 75, 116);
+  color: white;
+  border-radius: 10px;
+  font-weight: 700;
+  padding: 10px;
+  margin: 10px 0;
+}
+.target-choose-info {
+  background-color: white;
+  color: black;
+  font-weight: 650;
+  padding: 10px;
+  border-radius: 10px;
+}
+.full-game{
   background-color: rgb(253, 213, 206);
 }
