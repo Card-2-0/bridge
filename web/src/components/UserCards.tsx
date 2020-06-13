@@ -7,14 +7,13 @@ const spades = <span className="suit">&spades;</span>;
 export const UserCards = ({ cards, game, handleDispatch, roundSuit }: any) => {
   const [suit, setSuit] = useState<string>("");
   const [val, setVal] = useState<string>("");
-  const [anyCard, setAnyCard] = useState(true)
-
+  const [anyCard, setAnyCard] = useState(true);
   useEffect(() => {
-    if(roundSuit === "any") setAnyCard(true)
-    else if(cards.findIndex((card:any) => card.suit === roundSuit) === -1) setAnyCard(true)
-    else setAnyCard(false)
-  })
-
+    if (roundSuit === "any") setAnyCard(true);
+    else if (cards.findIndex((card: any) => card.suit === roundSuit) === -1)
+      setAnyCard(true);
+    else setAnyCard(false);
+  });
   return (
     <div className="playingCards fourColours rotateHand">
       <h3>Your Cards Are</h3>
@@ -22,36 +21,71 @@ export const UserCards = ({ cards, game, handleDispatch, roundSuit }: any) => {
         {cards.map((card: any, i: any) => {
           const lowerValue = card.value.toLowerCase();
           const suitLower = card.suit.toLowerCase();
-          return (
-            <li key={i} value={`${card.suit} ${card.value}`}>
-              <a className={`card rank-${lowerValue} ${suitLower}`}>
+          return card.value === val && card.suit === suit ? (
+            <li
+              key={i}
+              value={`${card.suit} ${card.value}`}
+              onClick={() => {
+                if (game && (anyCard || card.suit === roundSuit)) {
+                  setVal(card.value);
+                  setSuit(card.suit);
+                }
+              }}
+            >
+              <a
+                className={
+                  card.suit === roundSuit
+                    ? `card rank-${lowerValue} ${suitLower} available`
+                    : `card rank-${lowerValue} ${suitLower}`
+                }
+                style={{ marginTop: "-1rem" }}
+              >
                 <span className="rank">{card.value}</span>
                 {suitLower === "hearts" && hearts}
                 {suitLower === "clubs" && clubs}
-                {suitLower === "spades" && spades} 
+                {suitLower === "spades" && spades}
                 {suitLower === "diams" && diams}
-                {game && (anyCard || (card.suit === roundSuit)) && (
-                  <input
-                    type="radio"
-                    name="c-10C"
-                    id="c-10C"
-                    value="select"
-                    onClick={(e) => {
-                      setVal(card.value);
-                      setSuit(card.suit);
-                    }}
-                  />
-                )}
+              </a>
+            </li>
+          ) : (
+            <li
+              key={i}
+              value={`${card.suit} ${card.value}`}
+              onClick={() => {
+                if (game && (anyCard || card.suit === roundSuit)) {
+                  setVal(card.value);
+                  setSuit(card.suit);
+                }
+              }}
+            >
+              <a
+                className={
+                  card.suit === roundSuit
+                    ? `card rank-${lowerValue} ${suitLower} available`
+                    : `card rank-${lowerValue} ${suitLower}`
+                }
+              >
+                <span className="rank">{card.value}</span>
+                {suitLower === "hearts" && hearts}
+                {suitLower === "clubs" && clubs}
+                {suitLower === "spades" && spades}
+                {suitLower === "diams" && diams}
               </a>
             </li>
           );
         })}
-        <button
-          onClick={() => { handleDispatch(val, suit); setSuit(""); setVal("");}}
-          disabled={!val && !suit}
-        >
-          Dispatch Card
-        </button>
+        <div hidden={!game}>
+          <button
+            onClick={() => {
+              handleDispatch(val, suit);
+              setSuit("");
+              setVal("");
+            }}
+            disabled={!val && !suit}
+          >
+            Dispatch Card
+          </button>
+        </div>
       </ul>
     </div>
   );
