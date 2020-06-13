@@ -17,6 +17,11 @@ export const UserCards = ({ cards, game, handleDispatch, roundSuit }: any) => {
   return (
     <div className="playingCards fourColours rotateHand">
       <h3>Your Cards Are</h3>
+      {game ? (
+        <h4>Its Your Turn. Pick a card or a Highlighted Card</h4>
+      ) : (
+        <h4>Please wait for your turn...</h4>
+      )}
       <ul className="table">
         {cards.map((card: any, i: any) => {
           const lowerValue = card.value.toLowerCase();
