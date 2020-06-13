@@ -314,6 +314,11 @@ code {
   font-size: 20px;
   background-color: rgb(201, 2, 2);
 }
+.suit-symbol {
+  font-size: 20px;
+  font-weight: 400;
+  color: rgb(37, 1, 48);
+}
 
 .game{
   background-color: rgb(253, 213, 206);

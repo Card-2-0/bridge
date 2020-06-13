@@ -11,6 +11,12 @@ import { CardsOnTable } from "./CardsOnTable";
 import { Winner } from "./Winner";
 import { userInfo } from "os";
 
+const suitSymbol = new Map()
+suitSymbol.set("SPADES","&spades;")
+suitSymbol.set("DIAMS","&diams;")
+suitSymbol.set("CLUBS","&clubs;")
+suitSymbol.set("HEARTS","&hearts;")
+
 const calcScore = (tar: number, sco: number) => {
   if (sco < tar) return (10*(sco-tar));
   else return ((10*tar) + (sco - tar));
@@ -64,10 +70,10 @@ export const Messages = () => {
     if(trumpMessage === "") return
     let tMessage = trumpMessage.split(" ")
     let x = document.getElementById("trump-box")
-    if(tMessage.length != 2) {
+    if(tMessage.length > 3) {
       let msgbox = document.createElement("div")
-    msgbox.setAttribute("class", "final-trump-message-box")
-    msgbox.innerHTML = `<p class="trump-message">${trumpMessage}</p>`
+      msgbox.setAttribute("class", "final-trump-message-box")
+      msgbox.innerHTML = `<p class="trump-message">${trumpMessage}</p>`
       x?.appendChild(msgbox)
       return
     }
@@ -75,13 +81,13 @@ export const Messages = () => {
     let pno = (trumpTurn+2)%4+1
     if(pno-1 !== id)
     msgbox.innerHTML = `
-      <p class="trump-message"><span class="trump-player-name">${tMessage[0]}  </span> ${tMessage[1]}</p> 
+      <p class="trump-message"><span class="trump-player-name">${tMessage[0]}  </span> ${tMessage[1]} ${tMessage.length===3 ? tMessage[2] : ""}</p> 
       <p class="trump-player-no">Player ${pno}</p>
     `
     else
     msgbox.innerHTML = `
       <p class="y-trump-player-no">Your turn</p>
-      <p class="y-trump-message"><span class="y-trump-player-name">${tMessage[0]}  </span> ${tMessage[1]}</p>
+      <p class="y-trump-message"><span class="y-trump-player-name">${tMessage[0]}  </span> ${tMessage[1]} ${tMessage.length===3 ? tMessage[2] : ""}</p>
     `
     msgbox.setAttribute("class", "trump-message-box")
     x?.appendChild(msgbox)
@@ -104,7 +110,7 @@ export const Messages = () => {
         setNum(parseInt(trumpvalue) + 1);
         if (pid !== undefined && usersinfo) {
           setTrumpPlayer(parseInt(pid) + 1);
-          setTrumpMessage(`${usersinfo[pid].name} ${trumpvalue},${trumpsuit}`)
+          setTrumpMessage(`${usersinfo[pid].name} ${trumpvalue},${trumpsuit},<span class="suit-symbol">${suitSymbol.get(trumpsuit)}</span>`)
         }
         else if (trumpsuit !== "" && usersinfo) setTrumpMessage(`${usersinfo[(playerid+3)%4].name} PASS`)
         setTrumpTurn(playerid+1)
