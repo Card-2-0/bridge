@@ -1,42 +1,100 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 const diams = <span className="suit">&diams;</span>;
 const hearts = <span className="suit">&hearts;</span>;
 const clubs = <span className="suit">&clubs;</span>;
 const spades = <span className="suit">&spades;</span>;
 
 export const CardsOnTable = ({ cards, users }: any) => {
+  const [u1, setU1] = useState<any>();
+  const [u2, setU2] = useState<any>();
+  const [u3, setU3] = useState<any>();
+  const [u4, setU4] = useState<any>();
+  useEffect(() => {
+    if (cards) {
+      if (cards[cards.length - 1].id === 0) setU1(cards[cards.length - 1]);
+      else if (cards[cards.length - 1].id === 1) setU2(cards[cards.length - 1]);
+      else if (cards[cards.length - 1].id === 2) setU3(cards[cards.length - 1]);
+      else if (cards[cards.length - 1].id === 3) setU4(cards[cards.length - 1]);
+    }
+  }, [cards]);
   return (
     <div className="table-cards">
       <h3>Cards on Table:</h3>
+      {
+        <ol>
+          {cards.map((card: any, i: number) => (
+            <li key={i}>
+              {card.suit}, {card.value} from {users && users[card.id].name}
+            </li>
+          ))}
+        </ol>
+      }
+
       <div className="playingCards fourColours rotateHand">
-        <ul className="table">
-          {cards.map((card: any, i: any) => {
-            if (card.value === "14") card.value = "A";
-            if (card.value === "13") card.value = "K";
-            if (card.value === "12") card.value = "Q";
-            if (card.value === "11") card.value = "J";
-            const lowerValue = card.value.toLowerCase();
-            const suitLower = card.suit.toLowerCase();
-            return (
-              <a className={`card rank-${lowerValue} ${suitLower}`} key={i}>
-                <span className="rank">{card.value}</span>
-                {suitLower === "hearts" && hearts}
-                {suitLower === "clubs" && clubs}
-                {suitLower === "spades" && spades}
-                {suitLower === "diams" && diams}
+        <div className="grid-container">
+          <div className="item1">
+            {u1 ? (
+              <a
+                className={`card rank-${u1.value.toLowerCase()} ${u1.suit.toLowerCase()}`}
+              >
+                <span className="rank">{u1.value}</span>
+                {u1.suit === "HEARTS" && hearts}
+                {u1.suit === "CLUBS" && clubs}
+                {u1.suit === "SPADES" && spades}
+                {u1.suit === "DIAMS" && diams}
               </a>
-            );
-          })}
-        </ul>
-        {
-          <ol>
-            {cards.map((card: any, i: number) => (
-              <li key={i}>
-                {card.suit}, {card.value} from {users && users[card.id].name}
-              </li>
-            ))}
-          </ol>
-        }
+            ) : (
+              <p>{users && users[0].name}'s Cards will appear here </p>
+            )}
+          </div>
+          <div className="item1">
+            {u2 ? (
+              <a
+                className={`card rank-${u2.value.toLowerCase()} ${u2.suit.toLowerCase()}`}
+              >
+                <span className="rank">{u2.value}</span>
+                {u2.suit === "HEARTS" && hearts}
+                {u2.suit === "CLUBS" && clubs}
+                {u2.suit === "SPADES" && spades}
+                {u2.suit === "DIAMS" && diams}
+              </a>
+            ) : (
+              <p>{users && users[1].name}'s Cards will appear here</p>
+            )}
+          </div>
+        </div>
+        <div className="grid-container">
+          <div className="item1">
+            {u3 ? (
+              <a
+                className={`card rank-${u3.value.toLowerCase()} ${u3.suit.toLowerCase()}`}
+              >
+                <span className="rank">{u3.value}</span>
+                {u3.suit === "HEARTS" && hearts}
+                {u3.suit === "CLUBS" && clubs}
+                {u3.suit === "SPADES" && spades}
+                {u3.suit === "DIAMS" && diams}
+              </a>
+            ) : (
+              <p>{users && users[2].name}'s Cards will appear here</p>
+            )}
+          </div>
+          <div className="item1">
+            {u4 ? (
+              <a
+                className={`card rank-${u4.value.toLowerCase()} ${u4.suit.toLowerCase()}`}
+              >
+                <span className="rank">{u4.value}</span>
+                {u4.suit === "HEARTS" && hearts}
+                {u4.suit === "CLUBS" && clubs}
+                {u4.suit === "SPADES" && spades}
+                {u4.suit === "DIAMS" && diams}
+              </a>
+            ) : (
+              <p>{users && users[3].name}'s Cards will appear here</p>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
