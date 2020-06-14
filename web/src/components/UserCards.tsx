@@ -95,6 +95,7 @@ export const UserCards = ({ cards, game, handleDispatch, roundSuit }: any) => {
             setVal("");
           }}
           disabled={!val && !suit}
+          className="dispatch-button"
         >
           Dispatch Card
         </button>

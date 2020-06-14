@@ -616,3 +616,19 @@ p.dash-team-name{
   display: none;
   background-color: white;
 }
+.dispatch-button {
+  color: white;
+  background-color: green;
+  border: 0;
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-size: 20px;
+  font-weight: 600;
+}
+.dispatch-button:hover {
+  background-color: rgb(8, 189, 8);
+}
+.dispatch-button:disabled {
+  color: white;
+  background-color: rgb(240, 172, 160)
+}
