@@ -4,6 +4,7 @@ const hearts = <span className="suit">&hearts;</span>;
 const clubs = <span className="suit">&clubs;</span>;
 const spades = <span className="suit">&spades;</span>;
 
+const convert = ["J", "Q", "K", "A"];
 export const CardsOnTable = ({ cards, users }: any) => {
   const [u1, setU1] = useState<any>();
   const [u2, setU2] = useState<any>();
@@ -35,9 +36,15 @@ export const CardsOnTable = ({ cards, users }: any) => {
           <div className="item1">
             {u1 ? (
               <a
-                className={`card rank-${u1.value.toLowerCase()} ${u1.suit.toLowerCase()}`}
+                className={`card rank-${
+                  u1.value > 10
+                    ? convert[parseInt(u1.value) - 11].toLowerCase()
+                    : u1.value
+                } ${u1.suit.toLowerCase()}`}
               >
-                <span className="rank">{u1.value}</span>
+                <span className="rank">
+                  {u1.value > 10 ? convert[parseInt(u1.value) - 11] : u1.value}
+                </span>
                 {u1.suit === "HEARTS" && hearts}
                 {u1.suit === "CLUBS" && clubs}
                 {u1.suit === "SPADES" && spades}
@@ -50,16 +57,22 @@ export const CardsOnTable = ({ cards, users }: any) => {
           <div className="item1">
             {u2 ? (
               <a
-                className={`card rank-${u2.value.toLowerCase()} ${u2.suit.toLowerCase()}`}
+                className={`card rank-${
+                  u2.value > 10
+                    ? convert[parseInt(u2.value) - 11].toLowerCase()
+                    : u2.value
+                } ${u2.suit.toLowerCase()}`}
               >
-                <span className="rank">{u2.value}</span>
+                <span className="rank">
+                  {u2.value > 10 ? convert[parseInt(u2.value) - 11] : u2.value}
+                </span>
                 {u2.suit === "HEARTS" && hearts}
                 {u2.suit === "CLUBS" && clubs}
                 {u2.suit === "SPADES" && spades}
                 {u2.suit === "DIAMS" && diams}
               </a>
             ) : (
-              <p>{users && users[1].name}'s Cards will appear here</p>
+              <p>{users && users[1].name}'s Cards will appear here </p>
             )}
           </div>
         </div>
@@ -67,31 +80,43 @@ export const CardsOnTable = ({ cards, users }: any) => {
           <div className="item1">
             {u3 ? (
               <a
-                className={`card rank-${u3.value.toLowerCase()} ${u3.suit.toLowerCase()}`}
+                className={`card rank-${
+                  u3.value > 10
+                    ? convert[parseInt(u3.value) - 11].toLowerCase()
+                    : u3.value
+                } ${u3.suit.toLowerCase()}`}
               >
-                <span className="rank">{u3.value}</span>
+                <span className="rank">
+                  {u3.value > 10 ? convert[parseInt(u3.value) - 11] : u3.value}
+                </span>
                 {u3.suit === "HEARTS" && hearts}
                 {u3.suit === "CLUBS" && clubs}
                 {u3.suit === "SPADES" && spades}
                 {u3.suit === "DIAMS" && diams}
               </a>
             ) : (
-              <p>{users && users[2].name}'s Cards will appear here</p>
+              <p>{users && users[2].name}'s Cards will appear here </p>
             )}
           </div>
           <div className="item1">
             {u4 ? (
               <a
-                className={`card rank-${u4.value.toLowerCase()} ${u4.suit.toLowerCase()}`}
+                className={`card rank-${
+                  u4.value > 10
+                    ? convert[parseInt(u4.value) - 11].toLowerCase()
+                    : u4.value
+                } ${u4.suit.toLowerCase()}`}
               >
-                <span className="rank">{u4.value}</span>
+                <span className="rank">
+                  {u4.value > 10 ? convert[parseInt(u4.value) - 11] : u4.value}
+                </span>
                 {u4.suit === "HEARTS" && hearts}
                 {u4.suit === "CLUBS" && clubs}
                 {u4.suit === "SPADES" && spades}
                 {u4.suit === "DIAMS" && diams}
               </a>
             ) : (
-              <p>{users && users[3].name}'s Cards will appear here</p>
+              <p>{users && users[3].name}'s Cards will appear here </p>
             )}
           </div>
         </div>
