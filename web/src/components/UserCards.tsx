@@ -15,13 +15,14 @@ export const UserCards = ({ cards, game, handleDispatch, roundSuit }: any) => {
     else setAnyCard(false);
   });
   return (
-    <div className="playingCards fourColours rotateHand">
-      <h3>Your Cards Are</h3>
+    <div className="user-cards playingCards fourColours rotateHand">
       {game ? (
-        <h4>Its Your Turn. Pick a card or a Highlighted Card</h4>
+        <h3>Its Your Turn. Pick a card or a Highlighted Card</h3>
       ) : (
-        <h4>Please wait for your turn...</h4>
+        <h3>Please wait for your turn...</h3>
       )}
+      <h3>Your Cards Are</h3>
+      <div className="user-table">
       <ul className="table">
         {cards.map((card: any, i: any) => {
           const lowerValue = card.value.toLowerCase();
@@ -79,6 +80,9 @@ export const UserCards = ({ cards, game, handleDispatch, roundSuit }: any) => {
             </li>
           );
         })}
+        </ul>
+        </div>
+        <br/>
         <div hidden={!game}>
           <button
             onClick={() => {
@@ -91,7 +95,6 @@ export const UserCards = ({ cards, game, handleDispatch, roundSuit }: any) => {
             Dispatch Card
           </button>
         </div>
-      </ul>
     </div>
   );
 };

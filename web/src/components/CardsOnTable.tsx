@@ -20,20 +20,13 @@ export const CardsOnTable = ({ cards, users }: any) => {
   }, [cards]);
   return (
     <div className="table-cards">
-      <h3>Cards on Table:</h3>
-      {
-        <ol>
-          {cards.map((card: any, i: number) => (
-            <li key={i}>
-              {card.suit}, {card.value} from {users && users[card.id].name}
-            </li>
-          ))}
-        </ol>
-      }
-
-      <div className="playingCards fourColours rotateHand">
+      <h3>Cards on Table</h3>
+      
+      <div className="component playingCards fourColours rotateHand">
         <div className="grid-container">
-          <div className="item1">
+          <div className="item1 t1">
+            <h3>{users && users[0].name}</h3>
+            <div className="card-on-table">
             {u1 ? (
               <a
                 className={`card rank-${
@@ -51,10 +44,12 @@ export const CardsOnTable = ({ cards, users }: any) => {
                 {u1.suit === "DIAMS" && diams}
               </a>
             ) : (
-              <p>{users && users[0].name}'s Cards will appear here </p>
-            )}
+              <p><i className="fas fa-5x fa-question"></i></p>
+            )}</div>
           </div>
-          <div className="item1">
+          <div className="item1 t2">
+            <h3>{users && users[1].name}</h3>
+            <div className="card-on-table">
             {u2 ? (
               <a
                 className={`card rank-${
@@ -72,12 +67,37 @@ export const CardsOnTable = ({ cards, users }: any) => {
                 {u2.suit === "DIAMS" && diams}
               </a>
             ) : (
-              <p>{users && users[1].name}'s Cards will appear here </p>
-            )}
+              <p><i className="fas fa-5x fa-question"></i></p>
+            )}</div>
           </div>
         </div>
         <div className="grid-container">
-          <div className="item1">
+          <div className="item1 t2">
+            <h3>{users && users[3].name}</h3>
+            <div className="card-on-table">
+            {u4 ? (
+              <a
+                className={`card rank-${
+                  u4.value > 10
+                    ? convert[parseInt(u4.value) - 11].toLowerCase()
+                    : u4.value
+                } ${u4.suit.toLowerCase()}`}
+              > 
+                <span className="rank">
+                  {u4.value > 10 ? convert[parseInt(u4.value) - 11] : u4.value}
+                </span>
+                {u4.suit === "HEARTS" && hearts}
+                {u4.suit === "CLUBS" && clubs}
+                {u4.suit === "SPADES" && spades}
+                {u4.suit === "DIAMS" && diams}
+              </a>
+            ) : (
+              <p><i className="fas fa-5x fa-question"></i></p>
+            )}</div>
+          </div>
+          <div className="item1 t1">
+            <h3>{users && users[2].name}</h3>
+            <div className="card-on-table">
             {u3 ? (
               <a
                 className={`card rank-${
@@ -95,29 +115,8 @@ export const CardsOnTable = ({ cards, users }: any) => {
                 {u3.suit === "DIAMS" && diams}
               </a>
             ) : (
-              <p>{users && users[2].name}'s Cards will appear here </p>
-            )}
-          </div>
-          <div className="item1">
-            {u4 ? (
-              <a
-                className={`card rank-${
-                  u4.value > 10
-                    ? convert[parseInt(u4.value) - 11].toLowerCase()
-                    : u4.value
-                } ${u4.suit.toLowerCase()}`}
-              >
-                <span className="rank">
-                  {u4.value > 10 ? convert[parseInt(u4.value) - 11] : u4.value}
-                </span>
-                {u4.suit === "HEARTS" && hearts}
-                {u4.suit === "CLUBS" && clubs}
-                {u4.suit === "SPADES" && spades}
-                {u4.suit === "DIAMS" && diams}
-              </a>
-            ) : (
-              <p>{users && users[3].name}'s Cards will appear here </p>
-            )}
+              <p><i className="fas fa-5x fa-question"></i></p>
+            )}</div>
           </div>
         </div>
       </div>

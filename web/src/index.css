@@ -157,12 +157,19 @@ code {
 }
 .room-details {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  min-width: 400px;
+  align-items: center;
+  justify-content: center;
+  height: 86vh;
   margin: 15px;
 }
 .team-details {
   display: flex;
   flex-direction: column;
+}
+.td {
+  margin-bottom: 10px;
 }
 .teams-heading {
   background-color: tomato;
@@ -209,16 +216,21 @@ code {
   font-size: 10px;
   font-weight: 1000;
 }
-.scores {
-  margin-left: 15px;
-}
 .score-score {
   font-size: 40px;
 }
 .noofgames {
-  margin-left: 15px;
   display: flex;
   flex-direction: column;
+}
+.score-and-games {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+.scores {
+  margin-right: 10px;
 }
 .noofgames-heading {
   background-color: tomato;
@@ -375,6 +387,10 @@ select:hover {
   height: 86vh;
   display: flex;
   flex-direction: column;
+  margin-left: auto;
+}
+.trump-section-disable {
+  display: none;
 }
 .current-trump {
   display: flex;
@@ -437,9 +453,22 @@ select:hover {
   background-color: rgb(253, 213, 206);
 }
 .table-cards {
-  background-color: green;
+  margin: 25px;
+  background-color: tomato;
   min-height: 200px;
   max-width: 350px;
+  padding: 5px;
+  border-radius: 10px;
+  color: white;
+  align-content: center;
+  height: fit-content;
+  padding-left: 25px;
+  padding-bottom: 20px;
+  align-self: center;
+}
+.table-cards > h3 {
+  text-align: center;
+  padding: 5px;
 }
 /* }
 
@@ -459,21 +488,131 @@ select:hover {
 }
 
 .grid-container > div {
-  background-color: rgba(255, 255, 255, 0.8);
   text-align: center;
-  padding: 20px 0;
   font-size: 18px;
 }
 
 .item1 {
+  background-color: white;
+  color: black;
   grid-row: 1 / span 2;
-  max-height: 100px;
-  max-width: 100px;
-  min-width: 100px;
-  min-height: 100px;
+  min-height: 190px;
+  max-height: 190px;
+  min-width: 150px;
+  max-width: 150px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
 }
-
-/* .item1 a {
-  max-width: 90px;
-  max-height: 90px;
-} */
+.item1 > h3 {
+  color: white;
+  background-color: black;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  padding: 10px;
+}
+.card-on-table {
+  padding: 10px;
+}
+.fa-question {
+  padding: 12px;
+}
+.t2 {
+  color: white;
+  background-color: black;
+}
+.t2 > h3 {
+  color: black;
+  background-color: white;
+}
+.table-cards > h3 {
+  font-size: 30px;
+}
+.game-left {
+  display: flex;
+  flex-direction: row;
+}
+.trump-suit-display {
+  background-color: rgb(40, 75, 116);
+  color: white;
+  padding: 10px;
+  border-radius: 10px;
+  margin: 10px;
+  font-weight: 700;
+  font-size: 20px;
+  text-align: center;
+}
+.dash-topic {
+  display: flex;
+  flex-direction: column;
+}
+.dash-topic > h3 {
+  background-color: tomato;
+  color: white;
+  text-align: center;
+  border-top-right-radius: 10px;
+  border-top-left-radius: 10px;
+  padding: 10px;
+  min-width: 250px;
+}
+.dash-topic > p {
+  padding: 10px;
+  color: black;
+  background-color: white;  
+  text-align: center;
+}
+.dash-team-score {
+  min-width: 100px;
+  font-weight: 700;
+  font-size: 30px;
+}
+p.dash-team-name{
+  color: white;
+  background-color: black;
+}
+.dash-end {
+  margin-bottom: 20px;
+  border-bottom-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+.user-cards {
+  display: flex;
+  flex-direction: column;
+  margin: 25px;
+  align-items: center;
+  justify-content: center;
+  min-width: 600px;
+}
+.user-table {
+  display: flex;
+  flex-direction: row;
+  padding:25px;
+  width: 530px;
+}
+.winner-display {
+  background-color: rgb(40, 75, 116);
+  color: white;
+  padding: 10px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 20px;
+  text-align: center;
+}
+.user-left-info {
+  display: block;
+  text-align: center;
+  margin-top: 50px;
+  color: black;
+  padding: 20px;
+  font-size: 40px;
+  font-weight: 700;
+}
+.user-left-link {
+ color: red;
+ text-decoration: none;
+ text-align: center;
+}
+.userleft {
+  display: none;
+  background-color: white;
+}

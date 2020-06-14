@@ -4,8 +4,8 @@ import { Link } from "react-router-dom"
 export const UserLeft = () => {
     return (
         <div>
-            <p>One of the Players left</p>
-            <Link to='/'>Login Again</Link>
+            <p className="user-left-info">One of the Players left :(</p>
+            <p className="user-left-info">Login Again <Link to='/' className="user-left-link">here</Link></p>
         </div>
     )
 }

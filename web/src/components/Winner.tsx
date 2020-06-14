@@ -35,6 +35,6 @@ export const Winner = ({ cards, trump, call,check }: any) => {
   }, [cards])
   
   return (
-    <div>{higgest !== "" && <p>Winner is player {higgest + 1} from client</p>}</div>
+    <div>{higgest !== "" && <p className="winner-display">Round Done ! Winner is Player {higgest + 1}</p>}</div>
   );
 };

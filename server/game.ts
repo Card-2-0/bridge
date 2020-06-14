@@ -146,7 +146,7 @@ export const resetRoom = (name:string, winner:number) => {
   rooms[tmp].turn = winner
   rooms[tmp].round = []
   rooms[tmp].roundsDone += 1
-  if(rooms[tmp].roundsDone === 1) {
+  if(rooms[tmp].roundsDone === 2) {
     rooms[tmp].roundsDone = 0
     rooms[tmp].preStart = (rooms[tmp].preStart+1)%4
     rooms[tmp].users = []

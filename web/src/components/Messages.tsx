@@ -161,7 +161,7 @@ export const Messages = () => {
       setCardsOnRound([]);
       socket.disconnect();
     });
-    if(score[0]+score[1] === 1 && !gameDone) {
+    if(score[0]+score[1] === 2 && !gameDone) {
       setTotScore([
         totScore[0] + calcScore(target[0], score[0]),
         totScore[1] + calcScore(target[1], score[1]),
@@ -222,11 +222,12 @@ export const Messages = () => {
       {id != -1 && <h2 className="playerID">You are Player no. {id + 1}</h2>}
       <h1 className="room">Room: {room}</h1>
       </div>
-      <div className="game">
+      <div className={"game"+(userLeft ? " userleft" : "")}>
       <div className="game-left">
       {usersinfo && (
         <div className="room-details">
-          <div className = "team-details">
+          {game && <Game trump={trump} target={target} score={score} />}
+          <div className = "team-details td">
           <div className="teams-heading">
           <h3>Teams in Room</h3> 
           </div>
@@ -243,6 +244,7 @@ export const Messages = () => {
             </div>
           </div>
           </div>
+          <div className = "score-and-games">
           <div className="team-details scores">
             <div className="teams-heading"><h3>Total Scores</h3></div>
             <div className="teams">
@@ -260,17 +262,10 @@ export const Messages = () => {
           <div className="noofgames-heading"><h3>Games Played</h3></div>
           <div className="noofgames-result"><p>{noOfGames}</p></div>
           </div>
+          </div>
        </div>
       )}        
       
-      {game && <Game trump={trump} target={target} score={score} />}
-      {cardsOnRound.length > 0 && (
-        <CardsOnTable cards={cardsOnRound} users={usersinfo} />
-      )}
-      {cardsOnRound.length === 4 && (
-        <Winner cards={cardsOnRound} trump={trump} call={WinnerHandle} check={gameDone}/>
-      )}
-      {userLeft && <UserLeft />}
       {cards.length >= 1 && (
         <UserCards
           cards={cards}
@@ -279,10 +274,19 @@ export const Messages = () => {
           roundSuit={roundSuit}
         />
       )}
+      <div>
+      {cardsOnRound.length > 0 && (
+        <CardsOnTable cards={cardsOnRound} users={usersinfo} />
+      )}
+      {cardsOnRound.length === 4 && (
+        <Winner cards={cardsOnRound} trump={trump} call={WinnerHandle} check={gameDone}/>
+      )}
       </div>
 
-      <div className="trump-section">
-        { !game &&
+      </div>
+
+      <div className={"trump-section"+(game ? " trump-section-disable" : "")}>
+        { id !== -1 && !userLeft && !game &&
               <div id="historyBox" className="history-box">
                 <div className="teams-heading"><h3>Trump History</h3></div>
                 <div id="trump-box" className="trump-box"></div>
@@ -317,6 +321,7 @@ export const Messages = () => {
         <button onClick={(e) => {console.log(cards); closeModal();}}>Close</button>
       </Modal>
       
+      {userLeft && <UserLeft />}
     </div>
   );
 };
