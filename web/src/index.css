@@ -12,6 +12,9 @@ p {
 h3 {
   margin: 0;
 }
+h5 {
+  margin : 0;
+}
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
@@ -578,10 +581,32 @@ p.dash-team-name {
 .user-cards {
   display: flex;
   flex-direction: column;
-  margin: 25px;
+  padding: 25px;
+  padding-right: 20px;
   align-items: center;
   justify-content: center;
   min-width: 600px;
+  background-color: white;
+  margin-left: 30px;
+}
+.user-cards > h3 {
+  color: black;
+  margin-bottom: 25px;
+  font-size: 30px;
+}
+h3.wait-please {
+  color: red;
+}
+@keyframes changeColour {
+  from {color: green;}
+  to {color:rgb(139, 228, 5);}
+}
+h3.your-turn {
+  color: green;
+  animation-name: changeColour;
+  animation-duration: 0.5s;
+  animation-iteration-count: 50;
+  animation-direction: alternate;
 }
 .winner-display {
   background-color: rgb(40, 75, 116);
@@ -618,6 +643,7 @@ p.dash-team-name {
   padding: 10px 20px;
   font-size: 20px;
   font-weight: 600;
+  margin-top: 10px;
 }
 .dispatch-button:hover {
   background-color: rgb(8, 189, 8);
@@ -630,12 +656,47 @@ p.dash-team-name {
 .grid {
   display: grid;
   grid-template-columns: auto auto auto auto auto;
-  grid-gap: 10px;
+  grid-gap: 0px;
   padding: 10px;
 }
 
 .grid > div {
   text-align: center;
-  padding: 20px 0;
-  font-size: 25px;
+  padding: 5px 0;
+  font-size: 20px;
+}
+.modal {
+  display: flex;
+  flex-direction: column;
+  align-self: center;
+  justify-content: center;
+  background-color: black;
+  padding: 20px;
+  border-radius: 10px;
+}
+.modal > h3 {
+  font-weight: 800;
+  font-size: 30px;
+  margin-bottom: 10px;
+}
+.modal > h5 {
+  font-weight: 800;
+  margin-bottom: px;
+  font-size: 20px;
+}
+.modal > button {
+  margin-top: 20px;
+  border: 0;
+  font-size: 20px;
+  font-weight: 800;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: white;
+}.modal > button:hover {
+  background-color: rgb(206, 206, 206);
+}
+.ReactModal__Content {
+  height: 310px;
+  width: 400px;
+  color: #ffffff;
 }

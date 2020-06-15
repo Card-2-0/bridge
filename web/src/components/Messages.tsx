@@ -22,8 +22,8 @@ const calcScore = (tar: number, sco: number) => {
   else return ((10*tar) + (sco - tar));
 };
 
-const ENDPOINT = "http://localhost:8080/"
-// const ENDPOINT = "https://still-beyond-54734.herokuapp.com/"
+// const ENDPOINT = "http://localhost:8080/"
+const ENDPOINT = "https://still-beyond-54734.herokuapp.com/"
 let socket: any;
 let tmp: any = null;
 const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
@@ -98,8 +98,6 @@ export const Messages = () => {
     setTrump("")
     setNum(1)
     setGame(false)
-    setRoundTurn(false)
-    setRoundSuit("any")
     setTrumpPlayer(-1)
     setTargetChoose(-1)
     let x = document.getElementById("historyBox")
@@ -175,7 +173,7 @@ export const Messages = () => {
       setCardsOnRound([]);
       socket.disconnect();
     });
-    if(score[0]+score[1] === 1 && !gameDone) {
+    if(score[0]+score[1] === 13 && !gameDone) {
       setTotScore([
         totScore[0] + calcScore(target[0], score[0]),
         totScore[1] + calcScore(target[1], score[1]),
@@ -214,6 +212,8 @@ export const Messages = () => {
     setTarget([0,0])
     setScore([0,0])
     setCards(allCards.splice(0,13))
+    setRoundTurn(false)
+    setRoundSuit("any")
   }
 
   return (
@@ -312,14 +312,16 @@ export const Messages = () => {
         isOpen={gameDone}
         ariaHideApp={false}
       >
-        <h3>Results of Game:</h3>
+        <div className="modal">
+        <h3 className="modal-head">Results of Game</h3>
         <h5>Targets for teams :</h5>
         <p>Team 1 : {target[0]} , Team 2 : {target[1]}</p>
         <h5>Scores of Teams :</h5>
         <p>Team 1 : {score[0]} , Team 2 : {score[1]}</p>
         <h5>Total Scores</h5>
         <p>Team 1 : {totScore[0]} , Team 2 : {totScore[1]}</p>
-        <button onClick={(e) => {console.log(cards); closeModal();}}>Close</button>
+        <button onClick={(e) => {console.log(cards); closeModal();}}>Next Game !!!</button>
+        </div>
       </Modal>
       
       {userLeft && <UserLeft />}
