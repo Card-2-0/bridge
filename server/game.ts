@@ -17,7 +17,7 @@ export const addUser = (username: string, roomname: string, sid: string) => {
     rooms.push({
       name: roomname,
       users: [newuser],
-      trump: "",
+      trump: "NO TRUMP",
       turn: 0,
       passes: 0,
       target: [-1, -1],
@@ -146,11 +146,12 @@ export const resetRoom = (name:string, winner:number) => {
   rooms[tmp].turn = winner
   rooms[tmp].round = []
   rooms[tmp].roundsDone += 1
-  if(rooms[tmp].roundsDone === 13) {
+  if(rooms[tmp].roundsDone === 1) {
     rooms[tmp].roundsDone = 0
     rooms[tmp].preStart = (rooms[tmp].preStart+1)%4
     rooms[tmp].users = []
     rooms[tmp].turn = rooms[tmp].preStart
+    rooms[tmp].trump = "NO TRUMP" 
   }
 }
 
