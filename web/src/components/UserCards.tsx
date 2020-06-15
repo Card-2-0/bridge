@@ -22,71 +22,63 @@ export const UserCards = ({ cards, game, handleDispatch, roundSuit }: any) => {
         <h3>Please wait for your turn...</h3>
       )}
       <h3>Your Cards Are</h3>
-      <div className="user-table">
-        <ul className="table">
-          {cards.map((card: any, i: any) => {
-            const lowerValue = card.value.toLowerCase();
-            const suitLower = card.suit.toLowerCase();
-            return card.value === val && card.suit === suit ? (
-              <li
-                key={i}
-                value={`${card.suit} ${card.value}`}
-                onClick={() => {
-                  if (game && (anyCard || card.suit === roundSuit)) {
-                    setVal(card.value);
-                    setSuit(card.suit);
-                  }
-                }}
-              >
-                <a
-                  className={
-                    !anyCard
-                      ? roundSuit === card.suit
-                        ? `card rank-${lowerValue} ${suitLower} available`
-                        : `card rank-${lowerValue} ${suitLower}`
-                      : `card rank-${lowerValue} ${suitLower} available`
-                  }
-                  style={{ marginTop: "-1rem" }}
-                >
-                  <span className="rank">{card.value}</span>
-                  {suitLower === "hearts" && hearts}
-                  {suitLower === "clubs" && clubs}
-                  {suitLower === "spades" && spades}
-                  {suitLower === "diams" && diams}
-                </a>
-              </li>
-            ) : (
-              <li
-                key={i}
-                value={`${card.suit} ${card.value}`}
-                onClick={() => {
-                  if (game && (anyCard || card.suit === roundSuit)) {
-                    setVal(card.value);
-                    setSuit(card.suit);
-                  }
-                }}
-              >
-                <a
-                  className={
-                    !anyCard
-                      ? roundSuit === card.suit
-                        ? `card rank-${lowerValue} ${suitLower} available`
-                        : `card rank-${lowerValue} ${suitLower}`
-                      : `card rank-${lowerValue} ${suitLower} available`
-                  }
-                >
-                  <span className="rank">{card.value}</span>
-                  {suitLower === "hearts" && hearts}
-                  {suitLower === "clubs" && clubs}
-                  {suitLower === "spades" && spades}
-                  {suitLower === "diams" && diams}
-                </a>
-              </li>
-            );
-          })}
-        </ul>
-      </div>
       <br />
+      <div className="grid">
+        {cards.map((card: any, i: any) => {
+          const lowerValue = card.value.toLowerCase();
+          const suitLower = card.suit.toLowerCase();
+          return (
+            <div className="item" key={i}>
+              {card.value === val && card.suit === suit ? (
+                <a
+                  onClick={() => {
+                    if (game && (anyCard || card.suit === roundSuit)) {
+                      setVal(card.value);
+                      setSuit(card.suit);
+                    }
+                  }}
+                  className={
+                    !anyCard
+                      ? roundSuit === card.suit
+                        ? `card rank-${lowerValue} ${suitLower} available`
+                        : `card rank-${lowerValue} ${suitLower}`
+                      : `card rank-${lowerValue} ${suitLower} available`
+                  }
+                  style={{ marginTop: "-1.2rem" }}
+                >
+                  <span className="rank">{card.value}</span>
+                  {suitLower === "hearts" && hearts}
+                  {suitLower === "clubs" && clubs}
+                  {suitLower === "spades" && spades}
+                  {suitLower === "diams" && diams}
+                </a>
+              ) : (
+                <a
+                  onClick={() => {
+                    if (game && (anyCard || card.suit === roundSuit)) {
+                      setVal(card.value);
+                      setSuit(card.suit);
+                    }
+                  }}
+                  className={
+                    !anyCard
+                      ? roundSuit === card.suit
+                        ? `card rank-${lowerValue} ${suitLower} available`
+                        : `card rank-${lowerValue} ${suitLower}`
+                      : `card rank-${lowerValue} ${suitLower} available`
+                  }
+                >
+                  <span className="rank">{card.value}</span>
+                  {suitLower === "hearts" && hearts}
+                  {suitLower === "clubs" && clubs}
+                  {suitLower === "spades" && spades}
+                  {suitLower === "diams" && diams}
+                </a>
+              )}
+            </div>
+          );
+        })}
+      </div>
       <div hidden={!game}>
         <button
           onClick={() => {

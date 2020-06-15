@@ -558,7 +558,7 @@ select:hover {
 .dash-topic > p {
   padding: 10px;
   color: black;
-  background-color: white;  
+  background-color: white;
   text-align: center;
 }
 .dash-team-score {
@@ -566,7 +566,7 @@ select:hover {
   font-weight: 700;
   font-size: 30px;
 }
-p.dash-team-name{
+p.dash-team-name {
   color: white;
   background-color: black;
 }
@@ -586,7 +586,7 @@ p.dash-team-name{
 .user-table {
   display: flex;
   flex-direction: row;
-  padding:25px;
+  padding: 25px;
   width: 530px;
 }
 .winner-display {
@@ -608,9 +608,9 @@ p.dash-team-name{
   font-weight: 700;
 }
 .user-left-link {
- color: red;
- text-decoration: none;
- text-align: center;
+  color: red;
+  text-decoration: none;
+  text-align: center;
 }
 .userleft {
   display: none;
@@ -630,5 +630,18 @@ p.dash-team-name{
 }
 .dispatch-button:disabled {
   color: white;
-  background-color: rgb(240, 172, 160)
+  background-color: rgb(240, 172, 160);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: auto auto auto auto auto;
+  grid-gap: 10px;
+  padding: 10px;
+}
+
+.grid > div {
+  text-align: center;
+  padding: 20px 0;
+  font-size: 25px;
 }
