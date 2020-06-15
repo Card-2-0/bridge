@@ -35,7 +35,9 @@ export const Login = () => {
             <div className="login-input-section">
             <i className="fas fa-2x fa-sign-in-alt fas-submit"></i>
             <Link 
-                onClick={(e) => (!name || !room) ? e.preventDefault():null } 
+                onClick={(e) => {if(!name || !room || (name.indexOf(" ") != -1))
+                                 e.preventDefault()
+                                 alert('No space allowed in name')} } 
                 to={`/game?name=${name}&room=${room}`}
                 className = "login-submit"
             >Enter Room

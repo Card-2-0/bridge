@@ -21,7 +21,8 @@ export type room = {
   round: any[];
   suitofround: string,
   roundsDone:number,
-  preStart:number
+  preStart:number,
+  acusers: number;
 };
 
 export const values = [

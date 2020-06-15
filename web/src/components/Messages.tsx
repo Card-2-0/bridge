@@ -10,6 +10,8 @@ import { UserLeft } from "./UserLeft";
 import { CardsOnTable } from "./CardsOnTable";
 import { Winner } from "./Winner";
 import { userInfo } from "os";
+import { parse } from "path";
+import { Link } from "react-router-dom";
 
 const suitSymbol = new Map()
 suitSymbol.set("SPADES","&spades;")
@@ -22,9 +24,9 @@ const calcScore = (tar: number, sco: number) => {
   else return ((10*tar) + (sco - tar));
 };
 
-// const ENDPOINT = "http://localhost:8080/"
-const ENDPOINT = "https://still-beyond-54734.herokuapp.com/"
-let socket: any;
+const ENDPOINT = "http://localhost:8080/"
+// const ENDPOINT = "https://still-beyond-54734.herokuapp.com/"
+let socket: SocketIOClient.Socket;
 let tmp: any = null;
 const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
@@ -52,6 +54,35 @@ export const Messages = () => {
   const [gameDone, setGameDone] = useState(false);
   const [allCards, setAllCards] = useState<any[]>([])
   const [trumpMessage, setTrumpMessage] = useState<string>("")
+  const [connectAgain, setConnectAgain] = useState(false)
+
+  
+  useEffect(() => {
+    if(id !== -1){
+    localStorage.clear()
+    localStorage.setItem("name",name)
+    localStorage.setItem("cards",JSON.stringify(cards))
+    localStorage.setItem("usersinfo", JSON.stringify(usersinfo))
+    localStorage.setItem("id", String(id))
+    localStorage.setItem("trumpChoose",trumpChoose ? "1":"")
+    localStorage.setItem("trump", trump)
+    localStorage.setItem("num",String(num))
+    localStorage.setItem("game", game ? "1" : "")
+    localStorage.setItem("target",`${target[0]},${target[1]}`)
+    localStorage.setItem("targetChoose", String(targetChoose))// const [targetChoose, setTargetChoose] = useState(-1);
+    localStorage.setItem("trumpTurn", String(trumpTurn))// const [trumpTurn, setTrumpTurn] = useState(1) 
+    localStorage.setItem("trumpPlayer", String(trumpPlayer))// const [trumpPlayer, setTrumpPlayer] = useState(-1);
+    localStorage.setItem("roundTurn", roundTurn ? "1" : "")// const [roundTurn, setRoundTurn] = useState(false);
+    localStorage.setItem("cardsOnRound", JSON.stringify(cardsOnRound))// const [cardsOnRound, setCardsOnRound] = useState<any[]>([]);
+    localStorage.setItem("roundSuit", roundSuit)// const [roundSuit, setRoundSuit] = useState("any");
+    localStorage.setItem("score", `${score[0]},${score[1]}`)// const [score, setScore] = useState([0, 0]);
+    localStorage.setItem("totScore", `${totScore[0]},${totScore[1]}`)// const [totScore, setTotScore] = useState([0, 0]);
+    localStorage.setItem("noOfGames", String(noOfGames))// const [noOfGames, setNoOfGames] = useState(0);
+    localStorage.setItem("gameDone", gameDone ? "1":"")// const [gameDone, setGameDone] = useState(false);
+    localStorage.setItem("allCards", JSON.stringify(allCards))// const [allCards, setAllCards] = useState<any[]>([])
+    }
+  }, [name,cards,usersinfo, id, trumpChoose, trump, num,  game, target, targetChoose, trumpTurn, trumpPlayer, roundTurn, cardsOnRound, roundSuit, score, totScore, noOfGames, gameDone, allCards])
+
 
   useEffect(() => {
     socket = io(ENDPOINT);
@@ -59,9 +90,33 @@ export const Messages = () => {
     setName(name);
     setRoom(room);
     socket.emit("join", name, room, (error: any) => {
-      console.log(error);
-      alert(error);
-      window.location.pathname = "/";
+      if(error === "Room Full, Please try other room"){
+        console.log(error);
+        alert(error);
+        window.location.pathname = "/";
+        return
+      }
+      setUsersInfo(JSON.parse(localStorage.getItem("usersinfo")!))
+      setCards(JSON.parse(localStorage.getItem("cards")!))
+      setTrumpChoose(!!localStorage.getItem("trumpChoose"))
+      setTrump(localStorage.getItem("trump")!)
+      setNum(parseInt(localStorage.getItem("num")!))
+      setGame(!!localStorage.getItem("game"))
+      setTarget(localStorage.getItem("target")!.split(',').map((e) => parseInt(e)))
+      setTargetChoose(parseInt(localStorage.getItem("targetChoose")!))
+      setTrumpTurn(parseInt(localStorage.getItem("trumpTurn")!))
+      setTrumpPlayer(parseInt(localStorage.getItem("trumpPlayer")!))
+      setRoundTurn(!!localStorage.getItem("roundTurn"))     
+      setCardsOnRound(JSON.parse(localStorage.getItem("cardsOnRound")!).map((item:any) => {
+        return ({id:item.id, value:parseInt(item.value), suit:item.suit}) 
+      }))
+      setRoundSuit(localStorage.getItem("roundSuit")!)
+      setScore(localStorage.getItem("score")!.split(',').map((e) => parseInt(e)))
+      setTotScore(localStorage.getItem("totScore")!.split(',').map((e) => parseInt(e)))
+      setNoOfGames(parseInt(localStorage.getItem("noOfGames")!))
+      setGameDone(!!localStorage.getItem("gameDone"))
+      setAllCards(JSON.parse(localStorage.getItem("allCards")!))
+      setId(parseInt(localStorage.getItem("id")!))
     });
   }, [ENDPOINT]);
 
@@ -108,6 +163,10 @@ export const Messages = () => {
   }, [gameDone])
 
   useEffect(() => {
+    try {
+    socket.on("disconnect" ,() => {
+      setConnectAgain(true)
+    })
     socket.once("cards", (dcards: any, id: number|undefined, roomusers: any) => {
       setCards(dcards.slice(0,13))
       setAllCards(dcards.slice(13));
@@ -161,18 +220,14 @@ export const Messages = () => {
       setCardsOnRound(round);
     });
     socket.on("userLeft", () => {
-      setGame(false);
-      setTargetChoose(-1);
-      setTrump("");
-      setTrumpPlayer(-1);
-      setTrumpChoose(false);
-      setCards([]);
-      setUsersInfo(null);
-      setId(-1);
       setUserLeft(true);
-      setCardsOnRound([]);
-      socket.disconnect();
     });
+    socket.on("userRejoin", () => {
+      setUserLeft(false)
+    })
+    } catch (error) {
+      console.log(error)
+    }
     if(score[0]+score[1] === 13 && !gameDone) {
       setTotScore([
         totScore[0] + calcScore(target[0], score[0]),
@@ -323,8 +378,16 @@ export const Messages = () => {
         <button onClick={(e) => {console.log(cards); closeModal();}}>Next Game !!!</button>
         </div>
       </Modal>
+        
+      <Modal isOpen={userLeft} ariaHideApp={false}>
+        <p className="user-left-p">User left, wait</p>
+      </Modal>
+      <Modal isOpen={connectAgain} ariaHideApp={false}>
+        <p className="user-left-p">Connection lost, Login again</p>
+        <Link to="/">Login here</Link>
+      </Modal>
       
-      {userLeft && <UserLeft />}
+      {/* {userLeft && <UserLeft />} */}
     </div>
   );
 };

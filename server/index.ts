@@ -32,7 +32,14 @@ io.on("connect", async (socket) => {
 
   socket.on("join", (name: string, room: string, callback) => {
     let res = addUser(name, room, socket.id);
+    console.log(res)
     if (res === -1) return callback("Room Full, Please try other room");
+    if (res === -2) {
+      io.to(room).emit("userRejoin")
+      socketroom[socket.id] = room
+      socket.join(room)
+      return callback("Rejoin")
+    }
     socket.join(room);
     socketroom[socket.id] = room
     if (res === 4) {
@@ -92,7 +99,8 @@ io.on("connect", async (socket) => {
   socket.on("disconnect", () => {
     let tmp = socketroom[socket.id]
     delete socketroom[socket.id]
-    removeRoom(tmp)
+    console.log("left")
+    if(tmp) removeRoom(tmp)
     io.to(tmp).emit('userLeft')
   });
 });
