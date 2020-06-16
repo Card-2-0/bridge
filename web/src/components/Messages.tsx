@@ -55,8 +55,10 @@ export const Messages = () => {
   const [allCards, setAllCards] = useState<any[]>([])
   const [trumpMessage, setTrumpMessage] = useState<string>("")
   const [connectAgain, setConnectAgain] = useState(false)
+  const [showChat, setShowChat] = useState(false)
+  const [chat, setChat] = useState("")
+  const [chatInput, setChatInput] = useState("")
 
-  
   useEffect(() => {
     if(id !== -1){
     localStorage.clear()
@@ -150,6 +152,17 @@ export const Messages = () => {
   }, [trumpMessage])
 
   useEffect(() => {
+    if(chat === "" ) return
+    let msgbox = document.createElement("p")
+    msgbox.setAttribute("class", "chat-message")
+    msgbox.innerHTML = `
+    <span class="chat-user">${chat.split(':')[0]}</span><span class="chat-user-content">${chat.split(':')[1]}</span>
+    `
+    let x = document.getElementById("chat")
+    x?.appendChild(msgbox)
+  }, [chat])
+
+  useEffect(() => {
     if(!gameDone) return
     setTrump("")
     setNum(1)
@@ -224,6 +237,9 @@ export const Messages = () => {
     socket.on("userRejoin", () => {
       setUserLeft(false)
     })
+    socket.on("chat", (chatMessage:string) => {
+      setChat(chatMessage)
+    })
 
     if(score[0]+score[1] === 13 && !gameDone) {
       setTotScore([
@@ -268,17 +284,24 @@ export const Messages = () => {
     setRoundSuit("any")
   }
 
+  const sendMessage = () => {
+    setChatInput("")
+    socket.emit("chat", chatInput, name, room)
+  }
+
   return (
     <div className="full-game">
       <div className="game-header">
       <h1 className="hithere">Hi {name ? name : "There"}</h1>
       {id != -1 && <h2 className="playerID">You are Player no. {id + 1}</h2>}
       <h1 className="room">Room: {room}</h1>
+      <button className = "chat-open" onClick={(e) => {e.preventDefault(); setShowChat(true);}} >Chat Room</button>
       </div>
       <div className={"game"+(userLeft ? " userleft" : "")}>
       <div className="game-left">
-      {usersinfo && (
-        <div className="room-details">
+      {usersinfo &&(
+        <div>
+        <div className={"room-details" + (showChat ? " hide":"")}>
           {game && <Game trump={trump} target={target} score={score} />}
           <div className = "team-details td">
           <div className="teams-heading">
@@ -316,8 +339,19 @@ export const Messages = () => {
           <div className="noofgames-result"><p>{noOfGames}</p></div>
           </div>
           </div>
-       </div>
-      )}        
+       </div>)
+        <div className={"chat-room room-details" + (!showChat ? " hide":"")}>
+          <div className="chat-title"><h3>Chat</h3></div>
+          <div className="chat" id="chat"></div>
+          <form onSubmit={(e) => {e.preventDefault(); sendMessage();}}>
+            <input value={chatInput} type="text" id="chat-input" className = "chat-input" placeholder="Enter Message" onChange={(e) => {setChatInput(e.target.value)}} />
+            <button className="chat-send" type="submit" >Send</button>
+          </form>
+          <button className="chat-close" onClick={(e) => {e.preventDefault(); setShowChat(false)}}>Close</button>
+        </div>
+        </div>
+       )
+      }        
       
       {cards.length >= 1 && (
         <UserCards
@@ -383,7 +417,6 @@ export const Messages = () => {
         <p className="user-left-p">Connection lost, Login again</p>
         <Link to="/">Login here</Link>
       </Modal>
-      
       {/* {userLeft && <UserLeft />} */}
     </div>
   );
