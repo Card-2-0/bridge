@@ -1,10 +1,15 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
 const img = require("../assets/title.jpg")
 
 export const Login = () => {
     const [name, setName] = useState('')
     const [room, setRoom ] = useState('')
+    const [space, setSpace] = useState(false)
+    useEffect(() => {
+        if(name.indexOf(' ') !== -1) setSpace(true)
+        else setSpace(false)
+    },[name])
     return (
         <div className="login-page">
         <div className="login">
@@ -23,6 +28,7 @@ export const Login = () => {
                 value = {name}
                 onChange = { ({target}) => setName(target.value) }  /> 
             </div>
+            {space && <p>Space not allowed in name ! ! !</p>}
             <div className="login-input-section">
             <i className="fas fa-2x fa-key fas-field"></i>
             <input
@@ -35,9 +41,9 @@ export const Login = () => {
             <div className="login-input-section">
             <i className="fas fa-2x fa-sign-in-alt fas-submit"></i>
             <Link 
-                onClick={(e) => {if(!name || !room || (name.indexOf(" ") != -1))
-                                 e.preventDefault()
-                                 alert('No space allowed in name')} } 
+                onClick={(e) => (!name || !room || (name.indexOf(" ") != -1)) ?
+                                 e.preventDefault() :
+                                 null} 
                 to={`/game?name=${name}&room=${room}`}
                 className = "login-submit"
             >Enter Room

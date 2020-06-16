@@ -24,8 +24,8 @@ const calcScore = (tar: number, sco: number) => {
   else return ((10*tar) + (sco - tar));
 };
 
-const ENDPOINT = "http://localhost:8080/"
-// const ENDPOINT = "https://still-beyond-54734.herokuapp.com/"
+// const ENDPOINT = "http://localhost:8080/"
+const ENDPOINT = "https://still-beyond-54734.herokuapp.com/"
 let socket: SocketIOClient.Socket;
 let tmp: any = null;
 const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
@@ -90,7 +90,8 @@ export const Messages = () => {
     setName(name);
     setRoom(room);
     socket.emit("join", name, room, (error: any) => {
-      if(error === "Room Full, Please try other room"){
+      if(error === "Room Full, Please try other room" ||
+         error === "Name exists in room, Try another name"){
         console.log(error);
         alert(error);
         window.location.pathname = "/";
@@ -163,10 +164,8 @@ export const Messages = () => {
   }, [gameDone])
 
   useEffect(() => {
-    try {
-    socket.on("disconnect" ,() => {
-      setConnectAgain(true)
-    })
+    socket.on("connect_timeout", () => {console.log("connecion error1"); setConnectAgain(true)})
+    socket.on("reconnect_attempt", () => {console.log("connecion error2"); setConnectAgain(true)})
     socket.once("cards", (dcards: any, id: number|undefined, roomusers: any) => {
       setCards(dcards.slice(0,13))
       setAllCards(dcards.slice(13));
@@ -225,9 +224,7 @@ export const Messages = () => {
     socket.on("userRejoin", () => {
       setUserLeft(false)
     })
-    } catch (error) {
-      console.log(error)
-    }
+
     if(score[0]+score[1] === 13 && !gameDone) {
       setTotScore([
         totScore[0] + calcScore(target[0], score[0]),

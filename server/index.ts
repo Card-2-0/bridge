@@ -22,24 +22,27 @@ interface Hash {
   [details: string] : string;
 } 
 let socketroom:Hash = {};
+let socketname:Hash = {};
 
 const PORT = 8080;
 const app = express();
 const server = createServer(app);
-const io = socketio(server);
+const io = socketio(server).listen(server, {pingInterval:10000, pingTimeout:5000});
 io.on("connect", async (socket) => {
   // console.log(acusers);
 
   socket.on("join", (name: string, room: string, callback) => {
     let res = addUser(name, room, socket.id);
-    console.log(res)
+    console.log(name,room,res)
     if (res === -1) return callback("Room Full, Please try other room");
     if (res === -2) {
       io.to(room).emit("userRejoin")
       socketroom[socket.id] = room
+      socketname[socket.id] = name
       socket.join(room)
       return callback("Rejoin")
     }
+    if(res === -3) return callback("Name exists in room, Try another name")
     socket.join(room);
     socketroom[socket.id] = room
     if (res === 4) {
@@ -59,7 +62,7 @@ io.on("connect", async (socket) => {
       room: string,
       id: any
     ) => {
-      // console.log(trumpsuit, trumpvalue, pass);
+      console.log(room, id, trumpsuit, trumpvalue, pass);
       let nxtturn = trumpPlay(trumpvalue, trumpsuit, pass, room);
       if (nxtturn === -1) {
         let tar = getTarget(room);
@@ -98,8 +101,9 @@ io.on("connect", async (socket) => {
   })
   socket.on("disconnect", () => {
     let tmp = socketroom[socket.id]
+    console.log("left", socketname[socket.id], socketroom[socket.id])
+    delete socketname[socket.id]
     delete socketroom[socket.id]
-    console.log("left")
     if(tmp) removeRoom(tmp)
     io.to(tmp).emit('userLeft')
   });

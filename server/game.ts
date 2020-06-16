@@ -10,8 +10,13 @@ export const addUser = (username: string, roomname: string, sid: string) => {
     if(rooms[tmp].acusers != 4)
     for(let i=0; i<4; ++i)
       if(rooms[tmp].users[i].name === username)
-        return -2;
+        {rooms[tmp].acusers+=1; return -2;}
     return -1;
+  }
+  if(tmp !== -1)
+  for(let i=0; i<rooms[tmp].users.length; ++i) {
+    if(username === rooms[tmp].users[i].name)
+    return -3;
   }
   newuser = {
     id: sid,
@@ -167,7 +172,7 @@ export const resetRoom = (name:string, winner:number) => {
 
 export const removeRoom = (name:string) => {
   tmp = rooms.findIndex((item) => {return item.name === name})
-  // console.log(tmp, name)
+  console.log("removeRoom", name)
   rooms[tmp].acusers -= 1
   if(rooms[tmp].acusers === 0)
   rooms.splice(tmp,1)
