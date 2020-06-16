@@ -34,7 +34,11 @@ io.on("connect", async (socket) => {
   socket.on("join", (name: string, room: string, callback) => {
     let res = addUser(name, room, socket.id);
     console.log("join",name,room,res)
-    if (res === -1) return callback("Room Full, Please try other room");
+    if (res === -1) {
+      socketname[socket.id] = name
+      socketroom[socket.id] = room
+      return callback("Room Full, Please try other room");
+    }
     if (res === -2) {
       io.to(room).emit("userRejoin")
       socketroom[socket.id] = room
@@ -42,7 +46,11 @@ io.on("connect", async (socket) => {
       socket.join(room)
       return callback("Rejoin")
     }
-    if(res === -3) return callback("Name exists in room, Try another name")
+    if(res === -3) {
+      socketname[socket.id] = name
+      socketroom[socket.id] = room
+      return callback("Name exists in room, Try another name")
+    }
     socket.join(room);
     socketname[socket.id] = name
     socketroom[socket.id] = room
