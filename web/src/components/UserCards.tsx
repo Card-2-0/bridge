@@ -4,7 +4,13 @@ const hearts = <span className="suit">&hearts;</span>;
 const clubs = <span className="suit">&clubs;</span>;
 const spades = <span className="suit">&spades;</span>;
 
-export const UserCards = ({ cards, game, handleDispatch, roundSuit }: any) => {
+export const UserCards = ({
+  cards,
+  game,
+  handleDispatch,
+  roundSuit,
+  round,
+}: any) => {
   const [suit, setSuit] = useState<string>("");
   const [val, setVal] = useState<string>("");
   const [anyCard, setAnyCard] = useState(true);
@@ -16,10 +22,14 @@ export const UserCards = ({ cards, game, handleDispatch, roundSuit }: any) => {
   });
   return (
     <div className="user-cards playingCards fourColours rotateHand">
-      {game ? (
-        <h3 className='your-turn'>Its Your Turn. Pick a Highlighted Card</h3>
+      {round ? (
+        game ? (
+          <h3 className="your-turn">Its Your Turn. Pick a Highlighted Card</h3>
+        ) : (
+          <h3 className="wait-please">Please wait for your turn ...</h3>
+        )
       ) : (
-        <h3 className="wait-please">Please wait for your turn ...</h3>
+        <h3></h3>
       )}
       <div className="grid">
         {cards.map((card: any, i: any) => {
