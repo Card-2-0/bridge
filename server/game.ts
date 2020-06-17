@@ -5,14 +5,13 @@ let rooms: room[] = [];
 let newuser: user;
 
 export const addUser = (username: string, roomname: string, sid: string) => {
-  tmp = rooms.findIndex((r) => r.name === roomname);
-  console.log("addUser",tmp, "acusers=",tmp===-1?"":rooms[tmp].acusers)
-  if(tmp !== -1) rooms[tmp].acusers+=1; 
+  tmp = rooms.findIndex((r) => r.name === roomname); // index of room with given name in rooms
+  console.log("addUser",tmp, "acusers=",tmp===-1?"":rooms[tmp].acusers, tmp!==-1?rooms[tmp].users:"")
   if (tmp !== -1 && rooms[tmp].users.length === 4) {
-    if(rooms[tmp].acusers != 4)
+    if(rooms[tmp].acusers !== 4)
     for(let i=0; i<4; ++i)
       if(rooms[tmp].users[i].name === username)
-        {return -2;}
+        {rooms[tmp].acusers+=1; return -2;}
     return -1;
   }
   if(tmp !== -1)
@@ -20,6 +19,7 @@ export const addUser = (username: string, roomname: string, sid: string) => {
     if(username === rooms[tmp].users[i].name)
     return -3;
   }
+  if(tmp !== -1) rooms[tmp].acusers+=1; 
   newuser = {
     id: sid,
     name: username,
@@ -165,7 +165,6 @@ export const resetRoom = (name:string, winner:number) => {
   if(rooms[tmp].roundsDone === 13) {
     rooms[tmp].roundsDone = 0
     rooms[tmp].preStart = (rooms[tmp].preStart+1)%4
-    rooms[tmp].users = []
     rooms[tmp].turn = rooms[tmp].preStart
     rooms[tmp].trump = "NO TRUMP" 
   }

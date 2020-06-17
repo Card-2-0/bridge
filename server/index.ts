@@ -35,8 +35,6 @@ io.on("connect", async (socket) => {
     let res = addUser(name, room, socket.id);
     console.log("join",name,room,res)
     if (res === -1) {
-      socketname[socket.id] = name
-      socketroom[socket.id] = room
       return callback("Room Full, Please try other room");
     }
     if (res === -2) {
@@ -47,8 +45,6 @@ io.on("connect", async (socket) => {
       return callback("Rejoin")
     }
     if(res === -3) {
-      socketname[socket.id] = name
-      socketroom[socket.id] = room
       return callback("Name exists in room, Try another name")
     }
     socket.join(room);
@@ -109,15 +105,18 @@ io.on("connect", async (socket) => {
     io.to(room).emit("roundTurn", winner)
   })
   socket.on("chat", (message:string, name:string, room:string) => {
+    console.log("chat", room, ":" , name, message)
     io.to(room).emit("chat", `${name}:${message}`)
   })
   socket.on("disconnect", () => {
     let tmp = socketroom[socket.id]
     console.log("left", socketname[socket.id], socketroom[socket.id])
-    delete socketname[socket.id]
-    delete socketroom[socket.id]
-    if(tmp) removeRoom(tmp)
-    io.to(tmp).emit('userLeft')
+    if(tmp) {
+      removeRoom(tmp)
+      io.to(tmp).emit('userLeft', socketname[socket.id])
+      delete socketname[socket.id]
+      delete socketroom[socket.id]
+    }
   });
 });
 app.use(router);

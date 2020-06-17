@@ -24,8 +24,8 @@ const calcScore = (tar: number, sco: number) => {
   else return 10 * tar + (sco - tar);
 };
 
-const ENDPOINT = "http://localhost:8080/";
-// const ENDPOINT = "https://still-beyond-54734.herokuapp.com/"
+// const ENDPOINT = "http://localhost:8080/";
+const ENDPOINT = "https://still-beyond-54734.herokuapp.com/"
 let socket: SocketIOClient.Socket;
 let tmp: any = null;
 const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
@@ -48,7 +48,7 @@ export const Messages = () => {
   const [roundTurn, setRoundTurn] = useState(false);
   const [cardsOnRound, setCardsOnRound] = useState<any[]>([]);
   const [roundSuit, setRoundSuit] = useState("any");
-  const [userLeft, setUserLeft] = useState(false);
+  const [userLeft, setUserLeft] = useState("");
   const [score, setScore] = useState([0, 0]);
   const [totScore, setTotScore] = useState([0, 0]);
   const [noOfGames, setNoOfGames] = useState(0);
@@ -297,11 +297,11 @@ export const Messages = () => {
       setRoundSuit(suitofround);
       setCardsOnRound(round);
     });
-    socket.on("userLeft", () => {
-      setUserLeft(true);
+    socket.on("userLeft", (name:string) => {
+      setUserLeft(name);
     });
     socket.on("userRejoin", () => {
-      setUserLeft(false);
+      setUserLeft("");
     });
     socket.on("chat", (chatMessage: string) => {
       setChat(chatMessage);
@@ -555,8 +555,8 @@ export const Messages = () => {
         </div>
       </Modal>
 
-      <Modal isOpen={userLeft} ariaHideApp={false}>
-        <p className="user-left-p">User left, wait</p>
+      <Modal isOpen={!!userLeft} ariaHideApp={false}>
+        <p className="user-left-p">{userLeft} left, wait</p>
       </Modal>
       <Modal isOpen={connectAgain} ariaHideApp={false}>
         <p className="user-left-p">Connection lost, Login again</p>

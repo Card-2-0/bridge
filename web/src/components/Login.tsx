@@ -10,6 +10,18 @@ export const Login = () => {
         if(name.indexOf(' ') !== -1) setSpace(true)
         else setSpace(false)
     },[name])
+    useEffect(() => {
+    if( window.localStorage )
+    {
+        if( !localStorage.getItem('firstLoad') )
+        {
+        localStorage['firstLoad'] = true;
+        window.location.reload();
+        }
+        else
+        localStorage.removeItem('firstLoad');
+    }
+    },[])
     return (
         <div className="login-page">
         <div className="login">
