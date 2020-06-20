@@ -106,7 +106,7 @@ io.on("connect", async (socket) => {
   })
   socket.on("chat", (message:string, name:string, room:string) => {
     console.log("chat", room, ":" , name, message)
-    io.to(room).emit("chat", `${name}:${message}`)
+    io.to(room).emit("chat", `${name}$${message}`)
   })
   socket.on("disconnect", () => {
     let tmp = socketroom[socket.id]

@@ -777,3 +777,14 @@ button.chat-open:hover {
 .chat-close:hover{
   background-color: burlywood;
 }
+@keyframes changeColour1 {
+  from {background-color: green;}
+  to {background-color:rgb(113, 184, 8);}
+}
+button.unread {
+  background-color: green;
+  color: white;animation-name: changeColour1;
+  animation-duration: 0.5s;
+  animation-iteration-count: 1000;
+  animation-direction: alternate;
+}

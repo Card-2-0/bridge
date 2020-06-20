@@ -6,12 +6,11 @@ import { Trump } from "./Trump";
 import { UserCards } from "./UserCards";
 import { Game } from "./Game";
 import { TargetChoose } from "./TargetChoose";
-import { UserLeft } from "./UserLeft";
 import { CardsOnTable } from "./CardsOnTable";
 import { Winner } from "./Winner";
-import { userInfo } from "os";
-import { parse } from "path";
 import { Link } from "react-router-dom";
+const audioFile = require("../assets/juntos.mp3")
+const audio = new Audio(audioFile)
 
 const suitSymbol = new Map();
 suitSymbol.set("SPADES", "&spades;");
@@ -59,13 +58,16 @@ export const Messages = () => {
   const [showChat, setShowChat] = useState(false);
   const [chat, setChat] = useState("");
   const [chatInput, setChatInput] = useState("");
+  const [newMessage, setNewMessage] = useState(false)
 
   useEffect(() => {
     if (id !== -1) {
       localStorage.clear();
       localStorage.setItem("name", name);
       localStorage.setItem("cards", JSON.stringify(cards));
-      localStorage.setItem("usersinfo", JSON.stringify(usersinfo));
+      if(usersinfo) localStorage.setItem("usersinfo", JSON.stringify(usersinfo.map((user:any) => {
+        return { id : user.id, name: user.name, cards:[], room:user.room}
+      })));
       localStorage.setItem("id", String(id));
       localStorage.setItem("trumpChoose", trumpChoose ? "1" : "");
       localStorage.setItem("trump", trump);
@@ -201,11 +203,13 @@ export const Messages = () => {
     msgbox.setAttribute("class", "chat-message");
     msgbox.innerHTML = `
     <span class="chat-user">${
-      chat.split(":")[0]
-    }</span><span class="chat-user-content">${chat.split(":")[1]}</span>
+      chat.split("$")[0]
+    }</span><span class="chat-user-content">${chat.split("$")[1]}</span>
     `;
     let x = document.getElementById("chat");
     x?.appendChild(msgbox);
+    if(!showChat ) { if(!newMessage)setNewMessage(true);}
+    audio.play(); 
   }, [chat]);
 
   useEffect(() => {
@@ -362,13 +366,14 @@ export const Messages = () => {
         {id != -1 && <h2 className="playerID">You are Player no. {id + 1}</h2>}
         <h1 className="room">Room: {room}</h1>
         <button
-          className="chat-open"
+          className={"chat-open"+ (newMessage ? " unread":"")}
           onClick={(e) => {
             e.preventDefault();
             setShowChat(true);
+            setNewMessage(false);
           }}
         >
-          Chat Room
+          {newMessage && <span>&bull;  </span>}Chat Room
         </button>
       </div>
       <div className={"game" + (userLeft ? " userleft" : "")}>
