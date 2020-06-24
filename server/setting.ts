@@ -25,6 +25,21 @@ export type room = {
   acusers: number;
 };
 
+export type local = {
+  usersinfo: any,
+  trumpTurn: number,
+  trumpPlayer: number,
+  trump: string,
+  num: number,
+  target: number[],
+  roundTurn: number,
+  cardsOnRound: any,
+  roundSuit: string,
+  score: number[],
+  noOfGames: number,
+  rounds: number
+}
+
 export const values = [
   "A",
   "2",

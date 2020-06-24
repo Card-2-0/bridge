@@ -175,5 +175,6 @@ export const removeRoom = (name:string) => {
   rooms[tmp].acusers -= 1
   console.log("removeRoom", name, rooms[tmp].acusers)
   if(rooms[tmp].acusers === 0)
-  rooms.splice(tmp,1)
+  { rooms.splice(tmp,1); return 1; }
+  return 0;
 }

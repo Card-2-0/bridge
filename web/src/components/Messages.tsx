@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
 import queryString from "query-string";
 import io from "socket.io-client";
+import axios from "axios"
 import { Trump } from "./Trump";
 import { UserCards } from "./UserCards";
 import { Game } from "./Game";
@@ -60,51 +61,29 @@ export const Messages = () => {
   const [chatInput, setChatInput] = useState("");
   const [newMessage, setNewMessage] = useState(false)
 
-  useEffect(() => {
-    if (id !== -1) {
-      localStorage.clear();
-      localStorage.setItem("name", name);
-      localStorage.setItem("cards", JSON.stringify(cards));
-      if(usersinfo) localStorage.setItem("usersinfo", JSON.stringify(usersinfo.map((user:any) => {
-        return { id : user.id, name: user.name, cards:[], room:user.room}
-      })));
-      localStorage.setItem("id", String(id));
-      localStorage.setItem("trumpChoose", trumpChoose ? "1" : "");
-      localStorage.setItem("trump", trump);
-      localStorage.setItem("num", String(num));
-      localStorage.setItem("game", game ? "1" : "");
-      localStorage.setItem("target", `${target[0]},${target[1]}`);
-      localStorage.setItem("targetChoose", String(targetChoose)); // const [targetChoose, setTargetChoose] = useState(-1);
-      localStorage.setItem("trumpTurn", String(trumpTurn)); // const [trumpTurn, setTrumpTurn] = useState(1)
-      localStorage.setItem("trumpPlayer", String(trumpPlayer)); // const [trumpPlayer, setTrumpPlayer] = useState(-1);
-      localStorage.setItem("roundTurn", roundTurn ? "1" : ""); // const [roundTurn, setRoundTurn] = useState(false);
-      localStorage.setItem("cardsOnRound", JSON.stringify(cardsOnRound)); // const [cardsOnRound, setCardsOnRound] = useState<any[]>([]);
-      localStorage.setItem("roundSuit", roundSuit); // const [roundSuit, setRoundSuit] = useState("any");
-      localStorage.setItem("score", `${score[0]},${score[1]}`); // const [score, setScore] = useState([0, 0]);
-      localStorage.setItem("totScore", `${totScore[0]},${totScore[1]}`); // const [totScore, setTotScore] = useState([0, 0]);
-      localStorage.setItem("noOfGames", String(noOfGames)); // const [noOfGames, setNoOfGames] = useState(0);
-      localStorage.setItem("gameDone", gameDone ? "1" : ""); // const [gameDone, setGameDone] = useState(false);
-      localStorage.setItem("allCards", JSON.stringify(allCards)); // const [allCards, setAllCards] = useState<any[]>([])
+  useEffect( () => {
+    axios.get(ENDPOINT+"test").then ((res) =>
+    {
+      if (id !== -1) {
+        localStorage.clear();
+        localStorage.setItem("name", name);
+        localStorage.setItem("cards", JSON.stringify(cards));
+        localStorage.setItem("id", String(id));
+        localStorage.setItem("game", game ? "1" : "");
+        localStorage.setItem("targetChoose", String(targetChoose))
+        localStorage.setItem("totScore", `${totScore[0]},${totScore[1]}`); // const [totScore, setTotScore] = useState([0, 0]);
+        localStorage.setItem("gameDone", gameDone ? "1" : ""); // const [gameDone, setGameDone] = useState(false);
+        localStorage.setItem("allCards", JSON.stringify(allCards)); // const [allCards, setAllCards] = useState<any[]>([])
+      }
     }
+    )
   }, [
     name,
     cards,
-    usersinfo,
     id,
-    trumpChoose,
-    trump,
-    num,
     game,
-    target,
     targetChoose,
-    trumpTurn,
-    trumpPlayer,
-    roundTurn,
-    cardsOnRound,
-    roundSuit,
-    score,
     totScore,
-    noOfGames,
     gameDone,
     allCards,
   ]);
@@ -114,7 +93,7 @@ export const Messages = () => {
     const { name, room }: any = queryString.parse(window.location.search);
     setName(name);
     setRoom(room);
-    socket.emit("join", name, room, (error: any) => {
+    socket.emit("join", name, room, async (error: any) => {
       if (
         error === "Room Full, Please try other room" ||
         error === "Name exists in room, Try another name"
@@ -124,41 +103,32 @@ export const Messages = () => {
         window.location.pathname = "/";
         return;
       }
-      setUsersInfo(JSON.parse(localStorage.getItem("usersinfo")!));
+      await axios.get(ENDPOINT).then (async (res) => {
+        console.log(res.data[room])
+        let pid = parseInt(localStorage.getItem("id")!)
+        setUsersInfo(res.data[room].usersinfo)
+        setTrumpChoose(res.data[room].trumpTurn === pid)
+        setTrump(res.data[room].trump)
+        setNum(res.data[room].num)
+        setTarget(res.data[room].target)
+        setTargetChoose(res.data[room].targetChoose)
+        setTrumpTurn(res.data[room].trumpTurn+1)
+        setTrumpPlayer(res.data[room].trumpPlayer)
+        setRoundTurn(res.data[room].roundTurn === pid)
+        setCardsOnRound(res.data[room].cardsOnRound)
+        setRoundSuit(res.data[room].roundSuit)
+        setScore(res.data[room].score)
+        setNoOfGames(res.data[room].noOfGames)
+      })
       setCards(JSON.parse(localStorage.getItem("cards")!));
-      setTrumpChoose(!!localStorage.getItem("trumpChoose"));
-      setTrump(localStorage.getItem("trump")!);
-      setNum(parseInt(localStorage.getItem("num")!));
       setGame(!!localStorage.getItem("game"));
-      setTarget(
-        localStorage
-          .getItem("target")!
-          .split(",")
-          .map((e) => parseInt(e))
-      );
-      setTargetChoose(parseInt(localStorage.getItem("targetChoose")!));
-      setTrumpTurn(parseInt(localStorage.getItem("trumpTurn")!));
-      setTrumpPlayer(parseInt(localStorage.getItem("trumpPlayer")!));
-      setRoundTurn(!!localStorage.getItem("roundTurn"));
-      setCardsOnRound(
-        JSON.parse(localStorage.getItem("cardsOnRound")!).map((item: any) => {
-          return { id: item.id, value: parseInt(item.value), suit: item.suit };
-        })
-      );
-      setRoundSuit(localStorage.getItem("roundSuit")!);
-      setScore(
-        localStorage
-          .getItem("score")!
-          .split(",")
-          .map((e) => parseInt(e))
-      );
       setTotScore(
         localStorage
           .getItem("totScore")!
           .split(",")
           .map((e) => parseInt(e))
       );
-      setNoOfGames(parseInt(localStorage.getItem("noOfGames")!));
+      setTargetChoose(parseInt(localStorage.getItem("targetChoose")!));
       setGameDone(!!localStorage.getItem("gameDone"));
       setAllCards(JSON.parse(localStorage.getItem("allCards")!));
       setId(parseInt(localStorage.getItem("id")!));
