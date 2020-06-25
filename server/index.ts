@@ -70,7 +70,10 @@ io.on("connect", async (socket) => {
         score: [0,0],
         noOfGames: 0,
         trumpPlayer: -1,
-        rounds: 0
+        rounds: 0,
+        trumpDone: false,
+        cards: users.map((user) => {return user.cards.slice(0,13)}),
+        allcards: users.map((user) => {return user.cards.slice(13)})
       }
       io.to(room).emit("trumpTurn", tur, "", "0");
     }
@@ -113,6 +116,7 @@ io.on("connect", async (socket) => {
   socket.on("targetSelect", (id: number, tar: number, room: string) => {
     if (setTarget(id, tar, room)) {
       io.to(room).emit("targetSelectDone", getTarget(room));
+      storeroom[room].trumpDone = true
       storeroom[room].target = getTarget(room)
       io.to(room).emit("roundTurn", getTurn(room))
       storeroom[room].roundTurn = getTurn(room)
@@ -123,6 +127,10 @@ io.on("connect", async (socket) => {
     let round = getRound(room)
     storeroom[room].roundSuit = round.length === 4 ? "any":getRoundSuit(room)
     storeroom[room].cardsOnRound = round
+    storeroom[room].cards[id] = storeroom[room].cards[id].filter ((c) => {
+      if(c.suit !== suit || c.value !== val) return true;
+      return false
+    })
     io.to(room).emit("roundStatus", round, round.length === 4 ? "any":getRoundSuit(room))
     if (nxtturn === -1) {
       // const result = winner(room);
@@ -139,6 +147,7 @@ io.on("connect", async (socket) => {
     storeroom[room].rounds += 1
     storeroom[room].score[winner%2] += 1
     if(storeroom[room].rounds === 13) {
+      storeroom[room].trumpDone = false
       storeroom[room].rounds = 0
       storeroom[room].noOfGames += 1
       storeroom[room].cardsOnRound = []
@@ -146,10 +155,12 @@ io.on("connect", async (socket) => {
       storeroom[room].score = [0,0]
       storeroom[room].roundTurn = -1
       storeroom[room].roundSuit = "any"
-      storeroom[room].trump = "NO TRUMP"
+      storeroom[room].trump = ""
       storeroom[room].num = 1
       storeroom[room].trumpPlayer = -1
       storeroom[room].trumpTurn = (storeroom[room].noOfGames%4)
+      for(let i=0; i<4; ++i) 
+      storeroom[room].cards[i] = storeroom[room].allcards[i].splice(0,13)
     }
     io.to(room).emit("roundTurn", winner)
   })
@@ -175,11 +186,11 @@ app.use(express.json());
 app.use(cors());
 
 app.get("/", (req,res) => {
-  console.log(req.hostname)
-  res.send(storeroom)
+  console.log(req.hostname, req.query)
+  res.send(storeroom[String(req.query.name)])
 })
 app.get("/test", (req,res) => {
-  console.log("Dispatch")
+  console.log("test")
   res.send("Done")
 })
 

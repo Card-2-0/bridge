@@ -30,6 +30,7 @@ export type local = {
   trumpTurn: number,
   trumpPlayer: number,
   trump: string,
+  trumpDone: boolean,
   num: number,
   target: number[],
   roundTurn: number,
@@ -37,7 +38,9 @@ export type local = {
   roundSuit: string,
   score: number[],
   noOfGames: number,
-  rounds: number
+  rounds: number,
+  cards:card[][],
+  allcards: card[][]
 }
 
 export const values = [

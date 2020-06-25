@@ -24,8 +24,8 @@ const calcScore = (tar: number, sco: number) => {
   else return 10 * tar + (sco - tar);
 };
 
-// const ENDPOINT = "http://localhost:8080/";
-const ENDPOINT = "https://still-beyond-54734.herokuapp.com/"
+// const ENDPOINT = "http://localhost:8080";
+const ENDPOINT = "https://still-beyond-54734.herokuapp.com"
 let socket: SocketIOClient.Socket;
 let tmp: any = null;
 const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
@@ -62,30 +62,22 @@ export const Messages = () => {
   const [newMessage, setNewMessage] = useState(false)
 
   useEffect( () => {
-    axios.get(ENDPOINT+"test").then ((res) =>
+    axios.get(ENDPOINT+"/test").then ((res) =>
     {
       if (id !== -1) {
         localStorage.clear();
         localStorage.setItem("name", name);
-        localStorage.setItem("cards", JSON.stringify(cards));
         localStorage.setItem("id", String(id));
-        localStorage.setItem("game", game ? "1" : "");
         localStorage.setItem("targetChoose", String(targetChoose))
         localStorage.setItem("totScore", `${totScore[0]},${totScore[1]}`); // const [totScore, setTotScore] = useState([0, 0]);
-        localStorage.setItem("gameDone", gameDone ? "1" : ""); // const [gameDone, setGameDone] = useState(false);
-        localStorage.setItem("allCards", JSON.stringify(allCards)); // const [allCards, setAllCards] = useState<any[]>([])
       }
     }
     )
   }, [
     name,
-    cards,
     id,
-    game,
     targetChoose,
     totScore,
-    gameDone,
-    allCards,
   ]);
 
   useEffect(() => {
@@ -103,25 +95,27 @@ export const Messages = () => {
         window.location.pathname = "/";
         return;
       }
-      await axios.get(ENDPOINT).then (async (res) => {
-        console.log(res.data[room])
+      await axios.get(ENDPOINT+'?name='+room).then (async (res) => {
+        console.log(res.data)
         let pid = parseInt(localStorage.getItem("id")!)
-        setUsersInfo(res.data[room].usersinfo)
-        setTrumpChoose(res.data[room].trumpTurn === pid)
-        setTrump(res.data[room].trump)
-        setNum(res.data[room].num)
-        setTarget(res.data[room].target)
-        setTargetChoose(res.data[room].targetChoose)
-        setTrumpTurn(res.data[room].trumpTurn+1)
-        setTrumpPlayer(res.data[room].trumpPlayer)
-        setRoundTurn(res.data[room].roundTurn === pid)
-        setCardsOnRound(res.data[room].cardsOnRound)
-        setRoundSuit(res.data[room].roundSuit)
-        setScore(res.data[room].score)
-        setNoOfGames(res.data[room].noOfGames)
+        setCards(res.data.cards[pid])
+        setAllCards(res.data.allcards[pid])
+        setUsersInfo(res.data.usersinfo)
+        setTrumpChoose(res.data.trumpTurn === pid)
+        setTrump(res.data.trump)
+        setNum(res.data.num)
+        setTarget(res.data.target)
+        setTargetChoose(res.data.targetChoose)
+        setTrumpTurn(res.data.trumpTurn+1)
+        setTrumpPlayer(res.data.trumpPlayer)
+        setRoundTurn(res.data.roundTurn === pid)
+        setCardsOnRound(res.data.cardsOnRound)
+        setRoundSuit(res.data.roundSuit)
+        setScore(res.data.score)
+        setNoOfGames(res.data.noOfGames)
+        setTrumpDone(res.data.trumpDone)
+        setGame(res.data.trumpDone)
       })
-      setCards(JSON.parse(localStorage.getItem("cards")!));
-      setGame(!!localStorage.getItem("game"));
       setTotScore(
         localStorage
           .getItem("totScore")!
@@ -129,8 +123,6 @@ export const Messages = () => {
           .map((e) => parseInt(e))
       );
       setTargetChoose(parseInt(localStorage.getItem("targetChoose")!));
-      setGameDone(!!localStorage.getItem("gameDone"));
-      setAllCards(JSON.parse(localStorage.getItem("allCards")!));
       setId(parseInt(localStorage.getItem("id")!));
     });
   }, [ENDPOINT]);
@@ -189,6 +181,7 @@ export const Messages = () => {
     setGame(false);
     setTrumpPlayer(-1);
     setTargetChoose(-1);
+    setTrumpDone(false)
     let x = document.getElementById("historyBox");
     while (x?.hasChildNodes) x.removeChild(x.children[0]);
     setTrumpTurn(((noOfGames + 1) % 4) + 1);
