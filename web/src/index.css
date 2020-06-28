@@ -747,8 +747,16 @@ button.chat-open:hover {
   margin-right: 10px;
 }
 .chat-message {
+  display: flex;
+  flex-direction: row;
   padding: 10px 20px;
   border-bottom: 2px solid rgb(189, 184, 184);
+}
+.chat-user-content {
+  font-size: 15px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 .chat-input {
   padding: 10px;
@@ -800,4 +808,9 @@ p.offline {
 }
 h1.acusers {
   color: black;
+}
+img {
+  margin: 0;
+  padding: 0;
+  float: none;
 }

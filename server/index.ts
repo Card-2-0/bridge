@@ -20,6 +20,13 @@ import {
   getActive
 } from "./game";
 import { user, local } from "./setting";
+
+const suitSymbol = new Map();
+suitSymbol.set("SPADES", "&spades;");
+suitSymbol.set("DIAMS", "&diams;");
+suitSymbol.set("CLUBS", "&clubs;");
+suitSymbol.set("HEARTS", "&hearts;");
+
 interface Hash {
   [details: string] : string;
 } 
@@ -80,7 +87,7 @@ io.on("connect", async (socket) => {
         cards: users.map((user) => {return user.cards.slice(0,13)}),
         allcards: users.map((user) => {return user.cards.slice(13)}),
         totScore: [0,0],
-        chat: []
+        chat: [],
       }
       io.to(room).emit("trumpTurn", tur, "", "0");
     }
@@ -119,7 +126,9 @@ io.on("connect", async (socket) => {
         storeroom[room].trumpPlayer = id+1;
         io.to(room).emit("trumpTurn", nxtturn, tru, trumpvalue, id);
       }
-      else io.to(room).emit("trumpTurn", nxtturn, tru, trumpvalue);
+      else {
+        io.to(room).emit("trumpTurn", nxtturn, tru, trumpvalue);
+      }
     }
   );
 

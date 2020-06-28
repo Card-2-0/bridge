@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
+import ReactEmoji from "react-emoji"
 import ScrollToBottom from 'react-scroll-to-bottom';
 import queryString from "query-string";
 import io from "socket.io-client";
@@ -25,8 +26,8 @@ const calcScore = (tar: number, sco: number) => {
   else return 10 * tar + (sco - tar);
 };
 
-const ENDPOINT = "http://localhost:8080";
-// const ENDPOINT = "https://still-beyond-54734.herokuapp.com"
+// const ENDPOINT = "http://localhost:8080";
+const ENDPOINT = "https://still-beyond-54734.herokuapp.com"
 let socket: SocketIOClient.Socket;
 let tmp: any = null;
 const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
@@ -405,7 +406,7 @@ export const Messages = () => {
                   {chat.map((msg:string) => 
                     <p className="chat-message">
                       <span className="chat-user">{msg.split("$")[0]}</span>
-                      <span className="chat-user-content">{msg.split("$")[1]}</span>
+                      <span className="chat-user-content">{ReactEmoji.emojify(msg.split("$")[1])}</span>
                     </p>
                   )}
                 </ScrollToBottom>
