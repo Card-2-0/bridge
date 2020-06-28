@@ -80,6 +80,7 @@ io.on("connect", async (socket) => {
         cards: users.map((user) => {return user.cards.slice(0,13)}),
         allcards: users.map((user) => {return user.cards.slice(13)}),
         totScore: [0,0],
+        chat: []
       }
       io.to(room).emit("trumpTurn", tur, "", "0");
     }
@@ -177,7 +178,8 @@ io.on("connect", async (socket) => {
   })
   socket.on("chat", (message:string, name:string, room:string) => {
     console.log("chat", room, ":" , name, message)
-    io.to(room).emit("chat", `${name}$${message}`)
+    storeroom[room].chat.push(`${name}$${message}`)
+    io.to(room).emit("chat", storeroom[room].chat)
   })
   socket.on("disconnect", () => {
     let tmp = socketroom[socket.id]

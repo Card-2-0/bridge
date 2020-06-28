@@ -43,6 +43,7 @@ export type local = {
   cards:card[][],
   allcards: card[][],
   totScore: number[],
+  chat: string[]
 }
 
 export const values = [

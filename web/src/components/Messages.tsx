@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
+import ScrollToBottom from 'react-scroll-to-bottom';
 import queryString from "query-string";
 import io from "socket.io-client";
 import axios from "axios"
@@ -24,8 +25,8 @@ const calcScore = (tar: number, sco: number) => {
   else return 10 * tar + (sco - tar);
 };
 
-// const ENDPOINT = "http://localhost:8080";
-const ENDPOINT = "https://still-beyond-54734.herokuapp.com"
+const ENDPOINT = "http://localhost:8080";
+// const ENDPOINT = "https://still-beyond-54734.herokuapp.com"
 let socket: SocketIOClient.Socket;
 let tmp: any = null;
 const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
@@ -57,7 +58,7 @@ export const Messages = () => {
   const [trumpMessage, setTrumpMessage] = useState<string>("");
   const [connectAgain, setConnectAgain] = useState(false);
   const [showChat, setShowChat] = useState(false);
-  const [chat, setChat] = useState("");
+  const [chat, setChat] = useState<string[]>([]);
   const [chatInput, setChatInput] = useState("");
   const [newMessage, setNewMessage] = useState(false)
   const [acusers, setAcusers] = useState<any[]>([])
@@ -156,16 +157,16 @@ export const Messages = () => {
   }, [trumpMessage]);
 
   useEffect(() => {
-    if (chat === "") return;
-    let msgbox = document.createElement("p");
-    msgbox.setAttribute("class", "chat-message");
-    msgbox.innerHTML = `
-    <span class="chat-user">${
-      chat.split("$")[0]
-    }</span><span class="chat-user-content">${chat.split("$")[1]}</span>
-    `;
-    let x = document.getElementById("chat");
-    x?.appendChild(msgbox);
+    if (chat.length === 0) return;
+    // let msgbox = document.createElement("p");
+    // msgbox.setAttribute("class", "chat-message");
+    // msgbox.innerHTML = `
+    // <span class="chat-user">${
+    //   chat.split("$")[0]
+    // }</span><span class="chat-user-content">${chat.split("$")[1]}</span>
+    // `;
+    // let x = document.getElementById("chat");
+    // x?.appendChild(msgbox);
     if(!showChat ) { if(!newMessage)setNewMessage(true);}
     audio.play(); 
   }, [chat]);
@@ -270,7 +271,7 @@ export const Messages = () => {
       setRoundSuit(suitofround);
       setCardsOnRound(round);
     });
-    socket.on("chat", (chatMessage: string) => {
+    socket.on("chat", (chatMessage: string[]) => {
       setChat(chatMessage);
     });
     socket.on("userChange", (acusers:any) => {
@@ -400,7 +401,14 @@ export const Messages = () => {
                 <div className="chat-title">
                   <h3>Chat</h3>
                 </div>
-                <div className="chat" id="chat"></div>
+                <ScrollToBottom className="chat">
+                  {chat.map((msg:string) => 
+                    <p className="chat-message">
+                      <span className="chat-user">{msg.split("$")[0]}</span>
+                      <span className="chat-user-content">{msg.split("$")[1]}</span>
+                    </p>
+                  )}
+                </ScrollToBottom>
                 <form
                   onSubmit={(e) => {
                     e.preventDefault();
