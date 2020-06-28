@@ -8,6 +8,7 @@ export type user = {
   name: string;
   cards: card[];
   room: string;
+  ac: boolean
 };
 
 export type room = {
@@ -41,7 +42,7 @@ export type local = {
   rounds: number,
   cards:card[][],
   allcards: card[][],
-  totScore: number[]
+  totScore: number[],
 }
 
 export const values = [

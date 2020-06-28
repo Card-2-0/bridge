@@ -788,3 +788,16 @@ button.unread {
   animation-iteration-count: 1000;
   animation-direction: alternate;
 }
+p.online {
+  font-weight: 700;
+  font-size: 25px;
+  color: green;
+}
+p.offline {
+  font-weight: 700;
+  font-size: 25px;
+  color: red;
+}
+h1.acusers {
+  color: black;
+}

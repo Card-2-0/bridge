@@ -48,7 +48,7 @@ export const Messages = () => {
   const [roundTurn, setRoundTurn] = useState(false);
   const [cardsOnRound, setCardsOnRound] = useState<any[]>([]);
   const [roundSuit, setRoundSuit] = useState("any");
-  const [userLeft, setUserLeft] = useState("");
+  const [userLeft, setUserLeft] = useState(true);
   const [score, setScore] = useState([0, 0]);
   const [totScore, setTotScore] = useState([0, 0]);
   const [noOfGames, setNoOfGames] = useState(0);
@@ -60,30 +60,31 @@ export const Messages = () => {
   const [chat, setChat] = useState("");
   const [chatInput, setChatInput] = useState("");
   const [newMessage, setNewMessage] = useState(false)
+  const [acusers, setAcusers] = useState<any[]>([])
 
   useEffect( () => {
     axios.get(ENDPOINT+"/test").then ((res) =>
     {
       if (id !== -1) {
         localStorage.clear();
-        localStorage.setItem("name", name);
-        localStorage.setItem("id", String(id));
         localStorage.setItem("targetChoose", String(targetChoose))
       }
     }
     )
   }, [
-    name,
-    id,
     targetChoose,
   ]);
+
+  useEffect( () => {
+    return (() => {socket.disconnect()})
+  }, [])
 
   useEffect(() => {
     socket = io(ENDPOINT);
     const { name, room }: any = queryString.parse(window.location.search);
     setName(name);
     setRoom(room);
-    socket.emit("join", name, room, async (error: any) => {
+    socket.emit("join", name, room, async (error: any, opid:number) => {
       if (
         error === "Room Full, Please try other room" ||
         error === "Name exists in room, Try another name"
@@ -93,9 +94,10 @@ export const Messages = () => {
         window.location.pathname = "/";
         return;
       }
+      console.log(opid)
       await axios.get(ENDPOINT+'?name='+room).then (async (res) => {
         console.log(res.data)
-        let pid = parseInt(localStorage.getItem("id")!)
+        let pid = opid
         setCards(res.data.cards[pid])
         setAllCards(res.data.allcards[pid])
         setUsersInfo(res.data.usersinfo)
@@ -114,9 +116,10 @@ export const Messages = () => {
         setTrumpDone(res.data.trumpDone)
         setGame(res.data.trumpDone)
         setTotScore(res.data.totScore)
+        setAcusers(res.data.active)
       })
       setTargetChoose(parseInt(localStorage.getItem("targetChoose")!));
-      setId(parseInt(localStorage.getItem("id")!));
+      setId(opid);
     });
   }, [ENDPOINT]);
 
@@ -183,6 +186,15 @@ export const Messages = () => {
   }, [gameDone]);
 
   useEffect(() => {
+    let c = 0;
+    console.log(acusers)
+    for(let i = 0; i<acusers.length; i++)
+    if(acusers[i].ac) c+=1;
+    if(c == 4) setUserLeft(false)
+    else setUserLeft(true)
+  }, [acusers])
+
+  useEffect(() => {
     socket.on("connect_timeout", () => {
       console.log("connecion error1");
       setConnectAgain(true);
@@ -196,6 +208,7 @@ export const Messages = () => {
       (dcards: any, id: number | undefined, roomusers: any) => {
         setCards(dcards.slice(0, 13));
         setAllCards(dcards.slice(13));
+        setUserLeft(false)
         if (id !== undefined) setId(id);
         if (roomusers) setUsersInfo(roomusers);
       }
@@ -257,15 +270,12 @@ export const Messages = () => {
       setRoundSuit(suitofround);
       setCardsOnRound(round);
     });
-    socket.on("userLeft", (name:string) => {
-      setUserLeft(name);
-    });
-    socket.on("userRejoin", () => {
-      setUserLeft("");
-    });
     socket.on("chat", (chatMessage: string) => {
       setChat(chatMessage);
     });
+    socket.on("userChange", (acusers:any) => {
+      setAcusers(acusers)
+    })
 
     if (score[0] + score[1] === 13 && !gameDone) {
       setTotScore([
@@ -332,7 +342,7 @@ export const Messages = () => {
           {newMessage && <span>&bull;  </span>}Chat Room
         </button>
       </div>
-      <div className={"game" + (userLeft ? " userleft" : "")}>
+      <div className="game">
         <div className="game-left">
           {usersinfo && (
             <div>
@@ -451,7 +461,7 @@ export const Messages = () => {
         <div
           className={"trump-section" + (game ? " trump-section-disable" : "")}
         >
-          {id !== -1 && !userLeft && !game && (
+          {id !== -1 && !game && (
             <div id="historyBox" className="history-box">
               <div className="teams-heading">
                 <h3>Trump History</h3>
@@ -516,14 +526,16 @@ export const Messages = () => {
         </div>
       </Modal>
 
-      <Modal isOpen={!!userLeft} ariaHideApp={false}>
-        <p className="user-left-p">{userLeft} left, wait</p>
+      <Modal isOpen={userLeft} ariaHideApp={false}>
+        <h1 className="acusers">Room Status</h1>
+        {acusers.map((user) => {return(
+          <p className={user.ac ? "online":"offline"}>{user.name}</p>
+        )})}
       </Modal>
       <Modal isOpen={connectAgain} ariaHideApp={false}>
         <p className="user-left-p">Connection lost, Login again</p>
         <Link to="/">Login here</Link>
       </Modal>
-      {/* {userLeft && <UserLeft />} */}
     </div>
   );
 };

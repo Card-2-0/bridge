@@ -15,7 +15,9 @@ import {
   getRoundSuit,
   removeRoom,
   resetRoom,
-  calcScore
+  calcScore,
+  idofuser,
+  getActive
 } from "./game";
 import { user, local } from "./setting";
 interface Hash {
@@ -24,6 +26,7 @@ interface Hash {
 interface Hash1 {
   [details: string] : local;
 } 
+
 let socketroom:Hash = {};
 let socketname:Hash = {};
 let storeroom:Hash1 = {};
@@ -42,11 +45,12 @@ io.on("connect", async (socket) => {
       return callback("Room Full, Please try other room");
     }
     if (res === -2) {
-      io.to(room).emit("userRejoin")
+      io.to(room).emit("userChange", getActive(room))
       socketroom[socket.id] = room
       socketname[socket.id] = name
       socket.join(room)
-      return callback("Rejoin")
+      let x = idofuser(room, name)
+      return callback("Rejoin",x)
     }
     if(res === -3) {
       return callback("Name exists in room, Try another name")
@@ -75,9 +79,12 @@ io.on("connect", async (socket) => {
         trumpDone: false,
         cards: users.map((user) => {return user.cards.slice(0,13)}),
         allcards: users.map((user) => {return user.cards.slice(13)}),
-        totScore: [0,0]
+        totScore: [0,0],
       }
       io.to(room).emit("trumpTurn", tur, "", "0");
+    }
+    else {
+      io.to(room).emit("userChange", getActive(room))
     }
   });
 
@@ -174,11 +181,14 @@ io.on("connect", async (socket) => {
   })
   socket.on("disconnect", () => {
     let tmp = socketroom[socket.id]
-    console.log("left", socketname[socket.id], socketroom[socket.id])
+    let tmpname = socketname[socket.id]
+    console.log("left", tmpname, socketroom[socket.id])
     if(tmp) {
-      if(removeRoom(tmp)) 
-      delete storeroom[tmp]
-      io.to(tmp).emit('userLeft', socketname[socket.id])
+      if(removeRoom(tmp,tmpname)) 
+      { delete storeroom[tmp]; }
+      else {
+        io.to(tmp).emit('userChange', getActive(tmp))
+      }
       delete socketname[socket.id]
       delete socketroom[socket.id]
     }
@@ -191,7 +201,7 @@ app.use(cors());
 
 app.get("/", (req,res) => {
   console.log(req.hostname, req.query)
-  res.send(storeroom[String(req.query.name)])
+  res.send({...storeroom[String(req.query.name)], active:getActive(String(req.query.name))})
 })
 app.get("/test", (req,res) => {
   console.log("test")
