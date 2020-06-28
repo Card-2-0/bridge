@@ -178,3 +178,8 @@ export const removeRoom = (name:string) => {
   { rooms.splice(tmp,1); return 1; }
   return 0;
 }
+
+export const calcScore = (tar: number, sco: number) => {
+  if (sco < tar) return 10 * (sco - tar);
+  else return 10 * tar + (sco - tar);
+};

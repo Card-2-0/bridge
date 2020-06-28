@@ -15,6 +15,7 @@ import {
   getRoundSuit,
   removeRoom,
   resetRoom,
+  calcScore
 } from "./game";
 import { user, local } from "./setting";
 interface Hash {
@@ -73,7 +74,8 @@ io.on("connect", async (socket) => {
         rounds: 0,
         trumpDone: false,
         cards: users.map((user) => {return user.cards.slice(0,13)}),
-        allcards: users.map((user) => {return user.cards.slice(13)})
+        allcards: users.map((user) => {return user.cards.slice(13)}),
+        totScore: [0,0]
       }
       io.to(room).emit("trumpTurn", tur, "", "0");
     }
@@ -151,6 +153,8 @@ io.on("connect", async (socket) => {
       storeroom[room].rounds = 0
       storeroom[room].noOfGames += 1
       storeroom[room].cardsOnRound = []
+      storeroom[room].totScore[1] = calcScore(storeroom[room].target[1], storeroom[room].score[1])
+      storeroom[room].totScore[0] = calcScore(storeroom[room].target[0], storeroom[room].score[0])
       storeroom[room].target = [0,0]
       storeroom[room].score = [0,0]
       storeroom[room].roundTurn = -1

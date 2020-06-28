@@ -69,7 +69,6 @@ export const Messages = () => {
         localStorage.setItem("name", name);
         localStorage.setItem("id", String(id));
         localStorage.setItem("targetChoose", String(targetChoose))
-        localStorage.setItem("totScore", `${totScore[0]},${totScore[1]}`); // const [totScore, setTotScore] = useState([0, 0]);
       }
     }
     )
@@ -77,7 +76,6 @@ export const Messages = () => {
     name,
     id,
     targetChoose,
-    totScore,
   ]);
 
   useEffect(() => {
@@ -115,13 +113,8 @@ export const Messages = () => {
         setNoOfGames(res.data.noOfGames)
         setTrumpDone(res.data.trumpDone)
         setGame(res.data.trumpDone)
+        setTotScore(res.data.totScore)
       })
-      setTotScore(
-        localStorage
-          .getItem("totScore")!
-          .split(",")
-          .map((e) => parseInt(e))
-      );
       setTargetChoose(parseInt(localStorage.getItem("targetChoose")!));
       setId(parseInt(localStorage.getItem("id")!));
     });

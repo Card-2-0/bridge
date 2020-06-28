@@ -40,7 +40,8 @@ export type local = {
   noOfGames: number,
   rounds: number,
   cards:card[][],
-  allcards: card[][]
+  allcards: card[][],
+  totScore: number[]
 }
 
 export const values = [
