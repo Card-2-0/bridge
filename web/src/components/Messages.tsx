@@ -66,19 +66,6 @@ export const Messages = () => {
   const [acusers, setAcusers] = useState<any[]>([])
 
   useEffect( () => {
-    axios.get(ENDPOINT+"/test").then ((res) =>
-    {
-      if (id !== -1) {
-        localStorage.clear();
-        localStorage.setItem("targetChoose", String(targetChoose))
-      }
-    }
-    )
-  }, [
-    targetChoose,
-  ]);
-
-  useEffect( () => {
     return (() => {socket.disconnect()})
   }, [])
 
@@ -123,8 +110,8 @@ export const Messages = () => {
         setTrumpHistory(res.data.trumpHistory)
         setTrumpMessage(res.data.trumpMessage)
         setChat(res.data.chat)
+        setTargetChoose(res.data.targetChoose[pid])
       })
-      setTargetChoose(parseInt(localStorage.getItem("targetChoose")!));
       setId(opid);
     });
   }, [ENDPOINT]);

@@ -45,7 +45,8 @@ export type local = {
   totScore: number[],
   chat: string[],
   trumpHistory: any[],
-  trumpMessage: string
+  trumpMessage: string,
+  targetChoose: number[]
 }
 
 export const values = [

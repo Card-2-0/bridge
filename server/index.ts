@@ -89,7 +89,8 @@ io.on("connect", async (socket) => {
         totScore: [0,0],
         chat: [],
         trumpHistory:[],
-        trumpMessage: ""
+        trumpMessage: "",
+        targetChoose: [-1,-1,-1,-1]
       }
       io.to(room).emit("trumpTurn", tur, "", "0");
     }
@@ -123,6 +124,10 @@ io.on("connect", async (socket) => {
         `
         io.to(room).emit("trumpDone", tru, tar, getTurn(room), storeroom[room].trumpHistory);
         let tc = ( tar[0] === 0 ) ? 0 : 1
+        storeroom[room].targetChoose[tc] = 0
+        storeroom[room].targetChoose[tc+2] = 0
+        storeroom[room].targetChoose[tc+1] = 2
+        storeroom[room].targetChoose[(tc+3)%4] = 2
         io.to(room).emit("targetChoose", tc);
         return;
       }
@@ -139,8 +144,10 @@ io.on("connect", async (socket) => {
   );
 
   socket.on("targetSelect", (id: number, tar: number, room: string) => {
+    storeroom[room].targetChoose[id] = 1
     if (setTarget(id, tar, room)) {
       io.to(room).emit("targetSelectDone", getTarget(room));
+      storeroom[room].targetChoose = [-1,-1,-1,-1]
       storeroom[room].trumpDone = true
       storeroom[room].target = getTarget(room)
       io.to(room).emit("roundTurn", getTurn(room))
