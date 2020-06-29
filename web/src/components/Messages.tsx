@@ -248,6 +248,7 @@ export const Messages = () => {
     });
     setCards(filter);
     socket.emit("round", room, id, val, suit);
+    setRoundTurn(false)
   };
 
   const WinnerHandle = (winner: number) => {
