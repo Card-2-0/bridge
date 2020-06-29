@@ -231,7 +231,7 @@ app.get("/", (req,res) => {
   res.send({...storeroom[String(req.query.name)], active:getActive(String(req.query.name))})
 })
 app.get("/test", (req,res) => {
-  console.log("test")
+  console.log("test", req.hostname)
   res.send("Done")
 })
 
