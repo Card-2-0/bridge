@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 const suitSymbol = new Map()
 suitSymbol.set("SPADES","&spades;")
 suitSymbol.set("DIAMS","&diams;")
@@ -8,6 +8,9 @@ suitSymbol.set("HEARTS","&hearts;")
 export const Trump = ({num, handleSubmit}:any) => {
   const [trumpSuit, setTrumpSuit] = useState("SPADES");
   const [trumpValue, setTrumpVal] = useState(String(num));
+  useEffect(() => {
+    setTrumpVal(String(num))
+  }, [num])
   const [dis, setDis] = useState(false)
   let arr = [];
   for (let i=num; i < 14; i++) {

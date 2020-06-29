@@ -112,7 +112,7 @@ io.on("connect", async (socket) => {
       let nxtturn = trumpPlay(trumpvalue, trumpsuit, pass, room);
       let tru = getTrump(room)
       storeroom[room].trump = tru
-      storeroom[room].trumpHistory.push({suit:trumpsuit, value:trumpvalue, pass, name:storeroom[room].usersinfo[id].name})
+      storeroom[room].trumpHistory.push({suit:trumpsuit, value:trumpvalue, pass, name:storeroom[room].usersinfo[id].name, id})
       if (nxtturn === -1) {
         let tar = getTarget(room);
         storeroom[room].trump = tru
@@ -133,6 +133,7 @@ io.on("connect", async (socket) => {
       }
       storeroom[room].trumpTurn = nxtturn
       storeroom[room].num = parseInt(trumpvalue)+1
+      console.log(storeroom[room].num)
       if (pass) {
         storeroom[room].trumpPlayer = id+1;
         io.to(room).emit("trumpTurn", nxtturn, tru, trumpvalue, id, storeroom[room].trumpHistory);

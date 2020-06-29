@@ -6,7 +6,7 @@ let newuser: user;
 
 export const addUser = (username: string, roomname: string, sid: string) => {
   tmp = rooms.findIndex((r) => r.name === roomname); // index of room with given name in rooms
-  console.log("addUser",tmp, "acusers=",tmp===-1?"":rooms[tmp].acusers, tmp!==-1?rooms[tmp].users:"")
+  // console.log("addUser",tmp, "acusers=",tmp===-1?"":rooms[tmp].acusers, tmp!==-1?rooms[tmp].users:"")
   if (tmp !== -1 && rooms[tmp].users.length === 4) {
     if(rooms[tmp].acusers !== 4)
     for(let i=0; i<4; ++i)

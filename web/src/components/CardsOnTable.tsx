@@ -12,16 +12,15 @@ export const CardsOnTable = ({ cards, users }: any) => {
   const [u4, setU4] = useState<any>(undefined);
   useEffect(() => {
     if (cards) {
-      if (cards.length === 1) {
-        setU1(undefined);
-        setU2(undefined);
-        setU3(undefined);
-        setU4(undefined);
-      }
-      if (cards[cards.length - 1].id === 0) setU1(cards[cards.length - 1]);
-      else if (cards[cards.length - 1].id === 1) setU2(cards[cards.length - 1]);
-      else if (cards[cards.length - 1].id === 2) setU3(cards[cards.length - 1]);
-      else if (cards[cards.length - 1].id === 3) setU4(cards[cards.length - 1]);
+      setU1(undefined);
+      setU2(undefined);
+      setU3(undefined);
+      setU4(undefined);
+      for(let i =0; i<cards.length; ++i)
+      if (cards[i].id === 0) setU1(cards[i]);
+      else if (cards[i].id === 1) setU2(cards[i]);
+      else if (cards[i].id === 2) setU3(cards[i]);
+      else if (cards[i].id === 3) setU4(cards[i]);
     }
   }, [cards]);
   return (

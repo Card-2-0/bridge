@@ -14,6 +14,7 @@ import { Winner } from "./Winner";
 import { Link } from "react-router-dom";
 const audioFile = require("../assets/juntos.mp3")
 const audio = new Audio(audioFile)
+const loadgif = require("../assets/loading.gif")
 
 const suitSymbol = new Map();
 suitSymbol.set("SPADES", <span className="suit">&spades;</span>);
@@ -173,7 +174,7 @@ export const Messages = () => {
         setTrump(trumpsuit);
         setNum(parseInt(trumpvalue) + 1);
         setTrumpHistory(tmphis)
-        if (pid !== undefined) setTrumpPlayer(parseInt(pid) + 1);
+        if (pid !== undefined) setTrumpPlayer(pid + 1);
         setTrumpTurn(playerid + 1);
       }
     );
@@ -337,7 +338,7 @@ export const Messages = () => {
                   </div>
                 </div>
               </div>
-              )
+              
               <div
                 className={
                   "chat-room room-details" + (!showChat ? " hide" : "")
@@ -441,7 +442,7 @@ export const Messages = () => {
                             <span>  PASS</span>
                           }
                         </p>
-                        <p className="trump-player-no">Player {id+1}</p>
+                        <p className="trump-player-no">Player {his.id+1}</p>
                         </div> )
                     )
                 })}
@@ -512,10 +513,32 @@ export const Messages = () => {
       </Modal>
 
       <Modal isOpen={userLeft} ariaHideApp={false}>
-        <h1 className="acusers">Room Status</h1>
-        {acusers.map((user) => {return(
-          <p className={user.ac ? "online":"offline"}>{user.name}</p>
-        )})}
+        {acusers.length === 0 && (
+          <div className="room-status">
+            <h2>Fetching Data .... </h2>
+            <img src={loadgif} height="160px" width="240px"></img>
+          </div>
+        )}
+        {acusers.length > 0 && acusers.length < 4 && (
+          <div className="room-status">
+            <h1 className="acusers">Room Status</h1>
+            {acusers.map((user) => {return(
+              <p className={user.ac ? "online":"offline"}>{user.name}</p>
+            )})}
+            <p className="room-status-info">Waiting for {4-acusers.length} more people to join the room ..</p>
+            <img src={loadgif} height="160px" width="240px"></img>
+          </div>
+        )}
+        {acusers.length === 4 && (
+          <div className="room-status">
+            <h1 className="acusers">Room Status</h1>
+            {acusers.map((user) => {return(
+              <p className={user.ac ? "online":"offline"}>{user.name}</p>
+            )})}
+            <p className="room-status-info">Some of your friends ( in red ) had a connection problem .. please wait while they reconnect again ..</p>
+            <img src={loadgif} height="160px" width="240px"></img>
+          </div>
+        )}
       </Modal>
       <Modal isOpen={connectAgain} ariaHideApp={false}>
         <p className="user-left-p">Connection lost, Login again</p>
