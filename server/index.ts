@@ -88,6 +88,8 @@ io.on("connect", async (socket) => {
         allcards: users.map((user) => {return user.cards.slice(13)}),
         totScore: [0,0],
         chat: [],
+        trumpHistory:[],
+        trumpMessage: ""
       }
       io.to(room).emit("trumpTurn", tur, "", "0");
     }
@@ -109,13 +111,17 @@ io.on("connect", async (socket) => {
       let nxtturn = trumpPlay(trumpvalue, trumpsuit, pass, room);
       let tru = getTrump(room)
       storeroom[room].trump = tru
+      storeroom[room].trumpHistory.push({suit:trumpsuit, value:trumpvalue, pass, name:storeroom[room].usersinfo[id].name})
       if (nxtturn === -1) {
         let tar = getTarget(room);
         storeroom[room].trump = tru
         storeroom[room].trumpPlayer = getTurn(room)+1
         storeroom[room].trumpTurn = -1
         storeroom[room].target = tar 
-        io.to(room).emit("trumpDone", tru, tar, getTurn(room));
+        storeroom[room].trumpMessage = `
+        TRUMP DONE - ${storeroom[room].usersinfo[id].name} chose ${tru} with ${tar[id%2]}
+        `
+        io.to(room).emit("trumpDone", tru, tar, getTurn(room), storeroom[room].trumpHistory);
         let tc = ( tar[0] === 0 ) ? 0 : 1
         io.to(room).emit("targetChoose", tc);
         return;
@@ -124,10 +130,10 @@ io.on("connect", async (socket) => {
       storeroom[room].num = parseInt(trumpvalue)+1
       if (pass) {
         storeroom[room].trumpPlayer = id+1;
-        io.to(room).emit("trumpTurn", nxtturn, tru, trumpvalue, id);
+        io.to(room).emit("trumpTurn", nxtturn, tru, trumpvalue, id, storeroom[room].trumpHistory);
       }
       else {
-        io.to(room).emit("trumpTurn", nxtturn, tru, trumpvalue);
+        io.to(room).emit("trumpTurn", nxtturn, tru, trumpvalue, undefined, storeroom[room].trumpHistory);
       }
     }
   );
@@ -182,6 +188,8 @@ io.on("connect", async (socket) => {
       storeroom[room].trumpTurn = (storeroom[room].noOfGames%4)
       for(let i=0; i<4; ++i) 
       storeroom[room].cards[i] = storeroom[room].allcards[i].splice(0,13)
+      storeroom[room].trumpHistory = []
+      storeroom[room].trumpMessage = ""
     }
     io.to(room).emit("roundTurn", winner)
   })

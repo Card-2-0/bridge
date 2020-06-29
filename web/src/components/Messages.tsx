@@ -16,10 +16,10 @@ const audioFile = require("../assets/juntos.mp3")
 const audio = new Audio(audioFile)
 
 const suitSymbol = new Map();
-suitSymbol.set("SPADES", "&spades;");
-suitSymbol.set("DIAMS", "&diams;");
-suitSymbol.set("CLUBS", "&clubs;");
-suitSymbol.set("HEARTS", "&hearts;");
+suitSymbol.set("SPADES", <span className="suit">&spades;</span>);
+suitSymbol.set("DIAMS", <span className="suit">&diams;</span>);
+suitSymbol.set("CLUBS", <span className="suit">&clubs;</span>);
+suitSymbol.set("HEARTS", <span className="suit">&hearts;</span>);
 
 const calcScore = (tar: number, sco: number) => {
   if (sco < tar) return 10 * (sco - tar);
@@ -35,6 +35,7 @@ const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 export const Messages = () => {
   const [name, setName] = useState("");
   const [room, setRoom] = useState("");
+  const [trumpHistory, setTrumpHistory] = useState<any[]>([{}])
   const [usersinfo, setUsersInfo] = useState(tmp);
   const [id, setId] = useState(-1);
   const [cards, setCards] = useState<{ suit: string; value: string }[]>([]);
@@ -119,6 +120,9 @@ export const Messages = () => {
         setGame(res.data.trumpDone)
         setTotScore(res.data.totScore)
         setAcusers(res.data.active)
+        setTrumpHistory(res.data.trumpHistory)
+        setTrumpMessage(res.data.trumpMessage)
+        setChat(res.data.chat)
       })
       setTargetChoose(parseInt(localStorage.getItem("targetChoose")!));
       setId(opid);
@@ -126,48 +130,7 @@ export const Messages = () => {
   }, [ENDPOINT]);
 
   useEffect(() => {
-    if (trumpMessage === "") return;
-    let tMessage = trumpMessage.split(" ");
-    let x = document.getElementById("trump-box");
-    if (tMessage.length > 3) {
-      let x = document.getElementById("trump-box1");
-      let msgbox = document.createElement("div");
-      msgbox.setAttribute("class", "final-trump-message-box");
-      msgbox.innerHTML = `<p class="trump-message">${trumpMessage}</p>`;
-      x?.appendChild(msgbox);
-      return;
-    }
-    let msgbox = document.createElement("div");
-    let pno = ((trumpTurn + 2) % 4) + 1;
-    if (pno - 1 !== id)
-      msgbox.innerHTML = `
-      <p class="trump-message"><span class="trump-player-name">${
-        tMessage[0]
-      }  </span> ${tMessage[1]} ${tMessage.length === 3 ? tMessage[2] : ""}</p> 
-      <p class="trump-player-no">Player ${pno}</p>
-    `;
-    else
-      msgbox.innerHTML = `
-      <p class="y-trump-player-no">Your turn</p>
-      <p class="y-trump-message"><span class="y-trump-player-name">${
-        tMessage[0]
-      }  </span> ${tMessage[1]} ${tMessage.length === 3 ? tMessage[2] : ""}</p>
-    `;
-    msgbox.setAttribute("class", "trump-message-box");
-    x?.appendChild(msgbox);
-  }, [trumpMessage]);
-
-  useEffect(() => {
     if (chat.length === 0) return;
-    // let msgbox = document.createElement("p");
-    // msgbox.setAttribute("class", "chat-message");
-    // msgbox.innerHTML = `
-    // <span class="chat-user">${
-    //   chat.split("$")[0]
-    // }</span><span class="chat-user-content">${chat.split("$")[1]}</span>
-    // `;
-    // let x = document.getElementById("chat");
-    // x?.appendChild(msgbox);
     if(!showChat ) { if(!newMessage)setNewMessage(true);}
     audio.play(); 
   }, [chat]);
@@ -217,39 +180,31 @@ export const Messages = () => {
     );
     socket.on(
       "trumpTurn",
-      (playerid: number, trumpsuit: string, trumpvalue: string, pid: any) => {
+      (playerid: number, trumpsuit: string, trumpvalue: string, pid: any, tmphis:any[]) => {
         if (playerid === id) setTrumpChoose(true);
         else setTrumpChoose(false);
         setTrump(trumpsuit);
         setNum(parseInt(trumpvalue) + 1);
-        if (pid !== undefined && usersinfo) {
-          setTrumpPlayer(parseInt(pid) + 1);
-          setTrumpMessage(
-            `${
-              usersinfo[pid].name
-            } ${trumpvalue},${trumpsuit},<span class="suit-symbol">${suitSymbol.get(
-              trumpsuit
-            )}</span>`
-          );
-        } else if (trumpsuit !== "" && usersinfo)
-          setTrumpMessage(`${usersinfo[(playerid + 3) % 4].name} PASS`);
+        setTrumpHistory(tmphis)
+        if (pid !== undefined) setTrumpPlayer(parseInt(pid) + 1);
         setTrumpTurn(playerid + 1);
       }
     );
     socket.on(
       "trumpDone",
-      (finalTrump: string, targets: number[], pid: number) => {
+      (finalTrump: string, targets: number[], pid: number, tmphis:any[]) => {
         setTrump(finalTrump);
+        setTrumpHistory(tmphis)
         setTrumpPlayer(pid + 1);
         setTrumpChoose(false);
         setTarget(targets);
-        setTrumpTurn(0);
+        setTrumpTurn(0); 
         if (usersinfo)
-          setTrumpMessage(
-            `TRUMP DONE - ${usersinfo[pid].name} chose ${finalTrump} with ${
-              targets[pid % 2]
-            }`
-          );
+        setTrumpMessage(
+          `TRUMP DONE - ${usersinfo[pid].name} chose ${finalTrump} with ${
+            targets[pid % 2]
+          }`
+        );
       }
     );
     socket.on("targetChoose", (t: number) => {
@@ -261,6 +216,8 @@ export const Messages = () => {
       setTarget(targets);
       setGame(true);
       setTrumpDone(true);
+      setTrumpMessage("")
+      setTrumpHistory([])
       setTargetChoose(-1);
     });
     socket.on("roundTurn", (turn: number) => {
@@ -475,8 +432,40 @@ export const Messages = () => {
               <div className="teams-heading">
                 <h3>Trump History</h3>
               </div>
-              <div id="trump-box" className="trump-box"></div>
-              <div id="trump-box1" className="trump-box"></div>
+              <ScrollToBottom className="trump-box">
+                {trumpHistory && trumpHistory.map((his,id) => {
+                    return(
+                      (his.name === name) ? (
+                        <div className="trump-message-box">
+                        <p className="y-trump-player-no">Your turn</p>
+                        <p className="y-trump-message">
+                          <span className="y-trump-player-name">{his.name}</span>
+                          {his.pass ? 
+                            <span> {his.value},{his.suit}<span className="suit-symbol">  {suitSymbol.get(his.suit)}</span></span> :
+                            <span>  PASS</span>
+                          }
+                        </p>
+                        </div> ) : (
+                        <div className="trump-message-box">
+                        <p className="trump-message">
+                          <span className="trump-player-name">{his.name}</span>
+                          {his.pass ? 
+                            <span> {his.value},{his.suit}<span className="suit-symbol">  {suitSymbol.get(his.suit)}</span></span> :
+                            <span>  PASS</span>
+                          }
+                        </p>
+                        <p className="trump-player-no">Player {id+1}</p>
+                        </div> )
+                    )
+                })}
+              </ScrollToBottom>
+              <div id="trump-box1" className="trump-box">
+                  { trumpMessage !== "" && 
+                  <div className="final-trump-message-box">
+                  <p className="trump-message">{trumpMessage}</p> 
+                  </div>
+                  }
+              </div>
               {trumpTurn !== 0 &&
                 (trumpTurn - 1 === id ? (
                   <div className="teams-heading turn-box-y">
