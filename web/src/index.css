@@ -850,3 +850,26 @@ img {
   margin: 0;
   margin-bottom: 10px;
 }
+a.rules {
+  background-color: rgb(147, 66, 253);
+  color: white;
+  border: 0;
+  border-radius: 10px;
+  font: inherit;
+  font-weight: 600;
+  font-size: 18px;
+  margin: 0 20px;
+  margin-right: 0;
+  padding: 10px;
+  text-decoration: none;
+}
+.login-rules {
+  font-size: 23px;
+  padding: 20px;
+  padding-top: 30px;
+  font-weight: 700;
+}
+.login-rules > a {
+  color: rgb(164, 164, 245);
+  text-decoration: none;
+}

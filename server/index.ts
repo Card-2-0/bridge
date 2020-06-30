@@ -90,7 +90,8 @@ io.on("connect", async (socket) => {
         chat: [],
         trumpHistory:[],
         trumpMessage: "",
-        targetChoose: [-1,-1,-1,-1]
+        targetChoose: [-1,-1,-1,-1],
+        matchDone: false
       }
       io.to(room).emit("trumpTurn", tur, "", "0");
     }
@@ -199,6 +200,9 @@ io.on("connect", async (socket) => {
       storeroom[room].trumpHistory = []
       storeroom[room].trumpMessage = ""
     }
+    if(storeroom[room].noOfGames === 8) {
+      storeroom[room].matchDone = true
+    }
     io.to(room).emit("roundTurn", winner)
   })
   socket.on("chat", (message:string, name:string, room:string) => {
@@ -228,6 +232,7 @@ app.use(cors());
 
 app.get("/", (req,res) => {
   console.log(req.hostname, req.query)
+  // console.log(getActive(String(req.query.name)))
   res.send({...storeroom[String(req.query.name)], active:getActive(String(req.query.name))})
 })
 app.get("/test", (req,res) => {

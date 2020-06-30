@@ -46,7 +46,8 @@ export type local = {
   chat: string[],
   trumpHistory: any[],
   trumpMessage: string,
-  targetChoose: number[]
+  targetChoose: number[],
+  matchDone: boolean
 }
 
 export const values = [

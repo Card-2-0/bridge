@@ -61,6 +61,7 @@ export const Login = () => {
             >Enter Room
             </Link>
             </div>
+            <p className="login-rules">Click here for <a href="/rules" target="_blank">Rules {"&"} Instructions</a></p>
         </div>
         </div>
     )

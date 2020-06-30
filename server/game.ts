@@ -188,7 +188,7 @@ export const removeRoom = (name:string, username:string) => {
   rooms[tmp].users.splice(tmp1,1)
   else
   rooms[tmp].users[tmp1].ac = false
-  console.log("removeRoom", name, rooms[tmp].acusers)
+  // console.log("removeRoom", name, rooms[tmp].acusers)
   if(rooms[tmp].acusers === 0)
   { rooms.splice(tmp,1); return 1; }
   return 0;

@@ -106,14 +106,14 @@ export const Rules = () => {
             <div>
               <p style={{ fontWeight: "bold" }}>
                 {" "}
-                Round Points >= Target for the team:
+                Round Points {">"}= Target for the team:
               </p>
               <p>Points = Round Points * 10 + (Round Points - Target )</p>
             </div>
             <div>
               <p style={{ fontWeight: "bold" }}>
                 {" "}
-                Target for the team > Round Points
+                Target for the team {">"} Round Points
               </p>
               <p>Points = (Round Points - Target )*10</p>
             </div>

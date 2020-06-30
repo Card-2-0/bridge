@@ -28,7 +28,7 @@ const calcScore = (tar: number, sco: number) => {
 };
 
 // const ENDPOINT = "http://localhost:8080";
-const ENDPOINT = "https://still-beyond-54734.herokuapp.com"
+const ENDPOINT = "https://bridge007.herokuapp.com"
 let socket: SocketIOClient.Socket;
 let tmp: any = null;
 const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
@@ -65,6 +65,7 @@ export const Messages = () => {
   const [chatInput, setChatInput] = useState("");
   const [newMessage, setNewMessage] = useState(false)
   const [acusers, setAcusers] = useState<any[]>([])
+  const [matchDone, setMatchDone] = useState(false)
 
   useEffect( () => {
     return (() => {socket.disconnect()})
@@ -85,9 +86,9 @@ export const Messages = () => {
         window.location.pathname = "/";
         return;
       }
-      console.log(opid)
+      // console.log(opid)
       await axios.get(ENDPOINT+'?name='+room).then (async (res) => {
-        console.log(res.data)
+        // console.log(res.data)
         let pid = opid
         setCards(res.data.cards[pid])
         setAllCards(res.data.allcards[pid])
@@ -112,6 +113,7 @@ export const Messages = () => {
         setTrumpMessage(res.data.trumpMessage)
         setChat(res.data.chat)
         setTargetChoose(res.data.targetChoose[pid])
+        setMatchDone(res.data.matchDone)
       })
       setId(opid);
     });
@@ -140,7 +142,7 @@ export const Messages = () => {
 
   useEffect(() => {
     let c = 0;
-    console.log(acusers)
+    // console.log(acusers)
     for(let i = 0; i<acusers.length; i++)
     if(acusers[i].ac) c+=1;
     if(c == 4) setUserLeft(false)
@@ -229,7 +231,10 @@ export const Messages = () => {
         totScore[0] + calcScore(target[0], score[0]),
         totScore[1] + calcScore(target[1], score[1]),
       ]);
+      // if(noOfGames !== 7) 
       setGameDone(true);
+      // else
+      // setMatchDone(true)
     }
   });
 
@@ -258,6 +263,11 @@ export const Messages = () => {
   };
 
   const closeModal = () => {
+    if(noOfGames === 7){
+      setMatchDone(true)
+      setGameDone(false)
+      return;
+    }
     setNoOfGames(noOfGames + 1);
     setCardsOnRound([]);
     setGameDone(false);
@@ -289,6 +299,7 @@ export const Messages = () => {
         >
           {newMessage && <span>&bull;  </span>}Chat Room
         </button>
+        <a href="/rules" target="_blank" className="rules">Rules ?</a>
       </div>
       <div className="game">
         <div className="game-left">
@@ -504,7 +515,7 @@ export const Messages = () => {
           </p>
           <button
             onClick={(e) => {
-              console.log(cards);
+              // console.log(cards);
               closeModal();
             }}
           >
@@ -544,6 +555,28 @@ export const Messages = () => {
       <Modal isOpen={connectAgain} ariaHideApp={false}>
         <p className="user-left-p">Connection lost, Login again</p>
         <Link to="/">Login here</Link>
+      </Modal>
+      <Modal isOpen={matchDone} ariaHideApp={false}>
+        <div className="modal">
+          <h3 className="modal-head">Results of Match</h3>
+          <h5>Total Scores</h5>
+          {usersinfo &&
+          <div>
+            <p>
+              Team 1 : {totScore[0]}<br/>( {usersinfo[0].name} , {usersinfo[2].name} )
+            </p>
+            <p>
+              Team 2 : {totScore[1]}<br/>( {usersinfo[1].name} , {usersinfo[3].name} )
+            </p>
+          </div>
+          }
+          <h1 className="match-winner">
+            {totScore[0]>totScore[1] ? "Team 1 Wins !!" :
+            totScore[0] === totScore[1] ? "Match Draw !!" : "Team 2 Wins"}
+          </h1>
+          <p className="match-info">Hope you enjoyed the game .. 
+          You can play another match with your friends by logging in again in a new room ..  Have fun !!</p>
+        </div>
       </Modal>
     </div>
   );
