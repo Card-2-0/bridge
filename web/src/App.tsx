@@ -1,12 +1,9 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-import { AppRoutes } from './routes';
+import React from "react";
+import "./App.css";
+import { AppRoutes } from "./routes";
 
 function App() {
-  return (
-    <AppRoutes />
-  );
+  return <AppRoutes />;
 }
 
 export default App;
