@@ -777,14 +777,18 @@ button.chat-open:hover {
   border: 0;
   width: 300px;
   background-color: rgb(195, 240, 240);
-  color: blue;
+  font-weight: 700;
+  font-size: 18px;
+  color: black;
 }
 .chat-send {
   padding: 10px;
   border: 0;
   width: 70px;
   font-weight: 600;
-  background-color: rgb(153, 209, 153);
+  font-size: 18px;
+  background-color: teal;
+  color: white;
 }
 .chat-close {
   width: 390px;
@@ -793,7 +797,7 @@ button.chat-open:hover {
   border-bottom-right-radius: 10px;
   padding: 10px;
   color: white;
-  background-color: red;
+  background-color: tomato;
   font-weight: 700;
 }
 .chat-close:hover {
